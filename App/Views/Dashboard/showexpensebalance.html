@@ -1,0 +1,67 @@
+{% extends 'base_dashboard.html' %}
+
+{% block title %}Show expense balance{% endblock %}
+{% block footer_scripts %}
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        var expenseRecords = $('#expenseListing').DataTable();
+    });
+  </script>
+
+{% endblock %}
+{% block breadcrumb %}Show expenses balance{% endblock %}
+
+{% block cardtitle %} See your balance here {% endblock %}
+
+{% block cardbody %}
+<div class="row align-items-center justify-content-center">
+    {% if expense.errors is not empty %}
+    <ul class="text-center error">
+        {% for error in expense.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+</div>
+<table id="expenseListing" class="table table-bordered table-striped" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+    <thead>
+      <tr>
+        <th>Sn.</th>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Payment</th>
+        <th>Date</th>
+        <th>Comment</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    {% for expenses in expenseTable %}
+    <tr>
+        <td> {{ loop.index }} </td>  
+        <td> {{ expenses.amount }} </td> 
+        <td> {{ expenses.name }} </td> 
+        <td> {{ expenses.payname }} </td> 
+        <td> {{ expenses.date_of_expense }} </td> 
+        <td> {{ expenses.expense_comment }} </td> 
+        <td><button type="button" name="update" id="{{ incomes.id }}" class="btn btn-warning btn-xs update"><span class="fas fa-edit fa-fw" title="Edit"></span></button></td>
+        <td><button type="button" name="delete" id="{{ incomes.id }}" class="btn btn-danger btn-xs delete" ><span class="fas fa-trash fa-fw" title="Delete"></span></button></td>
+    </tr>
+    {% endfor %}
+    <tfoot>
+      <tr>
+        <th>Sn.</th>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Date</th>
+        <th>Comment</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+{% endblock %}

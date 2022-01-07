@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Reset password{% endblock %}
+
+{% block footer %}
+
+    <script src="/js/hideShowPassword.min.js"></script>
+    <script src="/js/app.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            /**
+             * Validate the form
+             */
+            $('#formPassword').validate({
+                rules: {
+                    password: {
+                        required: true,
+                        minlength: 6,
+                        validPassword: true
+                    }
+                },
+            });
+
+            /**
+             * Show password toggle button
+             */
+             $('#inputPassword').hideShowPassword({
+                 show: false,
+                 innerToggle: 'focus'
+             });
+        });
+    </script>
+
+{% endblock %}
+
+{% block body %}
+
+{#
+    <h1>Reset password</h1>
+
+    {% if user.errors is not empty %}
+        <p>Errors:</p>
+        <ul>
+            {% for error in user.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" action="/password/reset-password" id="formPassword">
+        <input type="hidden" name="token" value="{{ token }}" />
+        <div class="form-group">
+            <label for="inputPassword">Password</label>
+            <input type="password" id="inputPassword" name="password" placeholder="Password" required 
+            class="form-control" />
+        </div>
+
+        <button class="btn btn-primary" type="submit">Reset password</button>
+
+    </form>
+#}
+<div class="container-fluid signin-slider bg-light text-primary">
+    <div class="row align-items-center justify-content-center">
+        {% if user.errors is not empty %}
+        <ul class="text-center error">
+            {% for error in user.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <div class="row align-items-center justify-content-center">
+        <div class="col-lg-4 text-center ">
+            <h1 class="masthead-heading text-uppercase mb-4">Reset Password</h1>
+            <form method="post" action="/password/reset-password" id="formPassword">
+                <div class="form-group mb-2">
+                    <label for="inputPassword">Password</label>
+                     <input type="password" id="inputPassword" name="password" placeholder="Password" required 
+                     class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Reset password</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

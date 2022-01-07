@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Forgot password{% endblock %}
+
+{% block body %}
+{#
+    <h1>Request password reset</h1>
+
+    <form method="post" action="/password/request-reset">
+        <div class="form-group">
+            <label for="inputEmail">Email address</label>
+            <input type="email" id="inputEmail" name="email" placeholder="Email address" autofocus value="{{ email }}" 
+            class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Send password</button>
+    </form>>
+#}
+
+<div class="container-fluid signin-slider bg-light text-primary">
+    <div class="row align-items-center justify-content-center">
+        <div class="col-lg-4 text-center ">
+            <h1 class="masthead-heading text-uppercase mb-4">Request password reset</h1>
+            <form method="post" action="/password/request-reset">
+                <div class="form-group mb-2">
+                    <label for="inputEmail">Email address</label>
+                    <input type="email" id="inputEmail" name="email" placeholder="Email address" autofocus value="{{ email }}" 
+                    class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Send password</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

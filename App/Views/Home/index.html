@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Landingpage{% endblock %}
+
+{% block body %}
+
+{# <h1>Welcome</h1>
+
+    {# {% if current_user %}
+        Hello {{ current_user.name }}.
+    {% else %}
+            <a href="/signup">Sign up</a> or 
+            <a href="/login">Sign in</a>.
+    {% endif %} 
+#}
+<section class="page-section home-slider bg-light text-white" id="home">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="container">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-lg-12">
+                        <div class="text-center">
+                            <h1 class="masthead-heading text-uppercase mb-0">CAN'T HANDLE YOUR FINANCES?</h1>
+                            <p class="masthead-subheading font-weight-light mb-0"> SIMPLIFY YOUR LIFE WITH THIS APP.
+                            </p>
+                            <div class="mt-4">
+                                <a href="/signup" class="btn btn-primary btn-round me-3 mt-4">Register
+                                    <span class="ms-1" data-feather="arrow-right"></span></a>
+                                <a href="#description" class="btn btn-info btn-round mt-4">Show me more
+                                    <span class="ms-1" data-feather="arrow-down"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="page-section bg-shadow mb-2" id="description">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <h2 class="page-section-heading text-center text-uppercase">Organise your life</h2>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-balance-scale"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+            </div>
+            <!-- About Section Content-->
+            <!--<div class="row">-->
+            <div class="col-lg-6 align-items-center">
+                <p class="lead mt-4 text-muted text-center">Hello, I would like to present you an App that will
+                    simplify your everyday life — now you will see how easy it might be
+                    to manage your finances. Save your energy and see how easy you can
+                    control your incomes and outcomes everyday!</p>
+            </div>
+            <!--</div>-->
+        </div>
+    </div>
+</section>
+
+<section class="page-section" id="more">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-3">
+                <div class="more-box mx-auto h-100 text-center mt-4">
+                    <div class="more-icon mt-4">
+                        <span class="more-span" data-feather="monitor"></span>
+                    </div>
+                    <h5 class="mt-5 text-uppercase">Sign up</h5>
+                    <p class="text-muted mt-3">In order to use it you need to sign up,
+                        just provide your name, lastname, email, login and password.</p>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="more-box h-100 text-center mt-4">
+                    <div class="more-icon mt-4">
+                        <span class="more-span" data-feather="cloud"></span>
+                    </div>
+                    <h5 class="mt-5 text-uppercase">All in one</h5>
+                    <p class="text-muted mt-3">Put your incomes and outcomes, all will be saved
+                        in database with actual or chosen date.</p>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="more-box h-100 text-center mt-4">
+                    <div class="more-icon mt-4">
+                        <span class="more-span" data-feather="file"></span>
+                    </div>
+                    <h5 class="mt-5 text-uppercase">History</h5>
+                    <p class="text-muted mt-3">Put your incomes and outcomes,
+                        all will be saved in database with actual or chosen date.</p>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="more-box h-100 text-center mt-4">
+                    <div class="more-icon mt-4">
+                        <span class="more-span" data-feather="settings"></span>
+                    </div>
+                    <h5 class="mt-5 text-uppercase">Settings</h5>
+                    <p class="text-muted mt-3">Create your own categories, edit your accounts,
+                        delete or add incomes and outcomes, whatever your like,
+                        its all yours to decide.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base_dashboard.html' %}
+
+{% block title %}Profile{% endblock %}
+{% block footer_scripts %}
+{% endblock %}
+{% block breadcrumb %} Profile {% endblock %}
+
+{% block cardtitle %} View your profile {% endblock %}
+
+
+
+{% block cardbody %}
+<dl class="dl-horizontal">
+    <dt>Name</dt>
+    <dd>{{ user.firstname }}</dd>
+    <dt>Lastname</dt>
+    <dd>{{ user.lastname }}</dd>
+    <dt>Username</dt>
+    <dd>{{ user.username }}</dd>
+    <dt>Email</dt>
+    <dd>{{ user.email }}</dd>
+</dl>
+
+<a href="/profile/edit">Edit</a>
+
+{% endblock %}

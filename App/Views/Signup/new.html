@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign up{% endblock %}
+{% block footer_scripts %}
+
+    <script src="/js/hideShowPassword.min.js"></script>
+    <script src="/js/app.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            /**
+             * Validate the form
+             */
+            $('#formSignup').validate({
+                rules: {
+                    name: 'required',
+                    email: {
+                        required: true,
+                        email: true,
+                        remote: '/account/validate-email'
+                    },
+                    password: {
+                        required: true,
+                        minlength: 6,
+                        validPassword: true
+                    }
+                },
+                messages: {
+                    email: {
+                        remote: 'email already taken'
+                    }
+                }
+            });
+
+            /**
+             * Show password toggle button
+             */
+             $('#inputPassword').hideShowPassword({
+                 show: false,
+                 innerToggle: 'focus'
+             });
+        });
+    </script>
+
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid signup-slider bg-light text-primary">
+        <div class="row align-items-center justify-content-center">
+            {% if user.errors is not empty %}
+            <ul class="text-center error">
+                {% for error in user.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-lg-4 text-center ">
+                <h1 class="masthead-heading text-uppercase mb-4">Sign up</h1>
+                <form method="post" action="/signup/create" id="formSignup">
+                    <div class="form-group mb-2">
+                        <label for="inputFirstname">Firstname</label>
+                        <input id="inputFirstname" class="form-control" name="firstname" placeholder="Firstname"
+                            value="{{ user.firstname }}" />
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="inputLastname">Lastname</label>
+                        <input id="inputLastname" class="form-control" name="lastname" placeholder="Lastname"
+                            value="{{ user.lastname }}" />
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="inputUsername">Username</label>
+                        <input id="inputUsername" class="form-control" name="username" placeholder="Username" autofocus
+                            value="{{ user.username }}" required />
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="inputEmail">Email address</label>
+                        <input id="inputEmail" type="email" class="form-control" name="email" placeholder="Enter email"
+                            value="{{ user.email }}" required />
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="inputPassword">Password</label>
+                        <input id="inputPassword" type="password" class="form-control" name="password"
+                            placeholder="Password" required />
+                    </div>
+    
+                    <button type="submit" class="btn btn-primary">Sign up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
