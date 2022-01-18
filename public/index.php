@@ -39,6 +39,10 @@ $router->add('logout', ['controller' => 'Login', 'action' => 'destroy']);
 $router->add('password/reset/{token:[\da-f]+}', ['controller' => 'Password', 'action' => 'reset']);
 $router->add('signup/activate/{token:[\da-f]+}', ['controller' => 'Signup', 'action' => 'activate']);
 $router->add('dashboard', ['controller' => 'Dashboard', 'action' => 'index']);
+$router->add('dashboard/addincome', ['controller' => 'Dashboard', 'action' => 'addincome']);
+$router->add('dashboard/addexpense', ['controller' => 'Dashboard', 'action' => 'addexpense']);
+$router->add('dashboard/showincomebalance', ['controller' => 'Dashboard', 'action' => 'showincomebalance']);
+$router->add('dashboard/showexpensebalance', ['controller' => 'Dashboard', 'action' => 'showexpensebalance']);
 $router->add('{controller}/{action}');
     
 $router->dispatch($_SERVER['QUERY_STRING']);

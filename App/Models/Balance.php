@@ -87,7 +87,7 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
@@ -105,7 +105,7 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
@@ -123,7 +123,7 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
@@ -141,7 +141,7 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
@@ -159,7 +159,7 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
@@ -177,7 +177,7 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
