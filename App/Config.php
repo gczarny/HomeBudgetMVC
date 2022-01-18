@@ -14,25 +14,25 @@ class Config
      * Database host
      * @var string
      */
-    const DB_HOST = '127.0.0.1:3307';
+    const DB_HOST = 'Your_host';
 
     /**
      * Database name
      * @var string
      */
-    const DB_NAME = 'user';
+    const DB_NAME = 'your_db_name';
 
     /**
      * Database user
      * @var string
      */
-    const DB_USER = 'mvcuser';
+    const DB_USER = 'your_db_user';
 
     /**
      * Database password
      * @var string
      */
-    const DB_PASSWORD = 'asdasd';
+    const DB_PASSWORD = 'your_password';
 
     /**
      * Show or hide error messages on screen
@@ -44,18 +44,5 @@ class Config
      * Secret key for hashing
      * @var string
      */
-    const SECRET_KEY = 'SJI3aWnP14xTGCjPDoVNUF5dH7UQugdW';
-
-     /**
-     * Mailgun API key
-     * 
-     * @var string
-     */
-    //const MAILGUN_API_KEY = '1905e3e201ffe331da3b0d8dbaca0182-7dcc6512-70a4447a';
-    /**
-     * Mailgun domain
-     * 
-     * @var string
-     */
-    //const MAILGUN_DOMAIN = 'sandboxb2545464388c411c97b324822e460142.mailgun.org';
+    const SECRET_KEY = 'your_generated_key_for_hashing';
 }
