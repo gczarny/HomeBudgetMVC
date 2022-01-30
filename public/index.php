@@ -43,6 +43,7 @@ $router->add('dashboard/addincome', ['controller' => 'Dashboard', 'action' => 'a
 $router->add('dashboard/addexpense', ['controller' => 'Dashboard', 'action' => 'addexpense']);
 $router->add('dashboard/showincomebalance', ['controller' => 'Dashboard', 'action' => 'showincomebalance']);
 $router->add('dashboard/showexpensebalance', ['controller' => 'Dashboard', 'action' => 'showexpensebalance']);
+$router->add('dashboard/showoverview', ['controller' => 'Dashboard', 'action' => 'showoverview']);
 $router->add('{controller}/{action}');
     
 $router->dispatch($_SERVER['QUERY_STRING']);

@@ -4,18 +4,21 @@
 {% block footer_scripts %}
     <script>
         $(document).ready(function() {
-
+            $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd'}).datepicker("setDate", new Date());
             /**
              * Validate the form
              */
             $('#formAddExpense').validate({
                 rules: {
-                    amount: 'required',
+                    amount: {
+                        required: true,
+                        number: true
+                    },
+                    date: 'dateISO',
                     expense_category: 'required',
                     expense_payment: 'required'
                 },
                 messages: {
-                    amount: 'Amount is required',
                     expense_category: 'Type of expense is required',
                     expense_payment: 'Method of payment is required'
                 }
@@ -31,7 +34,7 @@
 {% block cardbody %}
 <div class="row align-items-center justify-content-center">
     {% if expense.errors is not empty %}
-    <ul class="text-center error">
+    <ul style="list-style-type:none;" class="text-center error">
         {% for error in expense.errors %}
         <li>{{ error }}</li>
         {% endfor %}
@@ -48,7 +51,7 @@
         </div>
         <div class="form-group mb-2">
             <label for="inputDate">Date</label>
-            <input type="date" id="inputDate" class="form-control" name="date" placeholder="Date"
+            <input type="date" id="datepicker" class="form-control" name="date" placeholder="Date"
                 value="{{ expense.date }}" />
         </div>
         <div class="form-group mb-2">

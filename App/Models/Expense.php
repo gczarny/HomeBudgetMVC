@@ -40,7 +40,7 @@ class Expense extends \Core\Model
      */
     public function save()
     {
-        //$this->validate();
+        $this->validate();
 
         if (empty($this->errors)) {
 
@@ -53,7 +53,7 @@ class Expense extends \Core\Model
             $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
             $stmt->bindValue(':exp_cat', $this->expense_category, PDO::PARAM_INT);
             $stmt->bindValue(':paymethod', $this->expense_payment, PDO::PARAM_INT);
-            $stmt->bindValue(':amount', $this->amount, PDO::PARAM_INT);
+            $stmt->bindValue(':amount', $this->amount, PDO::PARAM_STR);
             $stmt->bindValue(':expdate', $this->date, PDO::PARAM_STR);
             $stmt->bindValue(':expcomment', $this->expense_comment, PDO::PARAM_STR);
 
@@ -72,6 +72,9 @@ class Expense extends \Core\Model
     {
         if ($this->amount == '') {
             $this->errors[] = 'Amount is required';
+        }
+        else if (!is_numeric($this->amount)){
+            $this->errors[] = 'Amount must be numeric!';
         }
         if ($this->expense_category == '') {
             $this->errors[] = 'Type of expense is required';

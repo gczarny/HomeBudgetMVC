@@ -40,7 +40,7 @@ class Income extends \Core\Model
      */
     public function save()
     {
-        //$this->validate();
+        $this->validate();
 
         if (empty($this->errors)) {
 
@@ -52,7 +52,7 @@ class Income extends \Core\Model
             $stmt = $db->prepare($sql);
             $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
             $stmt->bindValue(':exp_cat', $this->income_category, PDO::PARAM_INT);
-            $stmt->bindValue(':amount', $this->amount, PDO::PARAM_INT);
+            $stmt->bindValue(':amount', $this->amount, PDO::PARAM_STR);
             $stmt->bindValue(':expdate', $this->date, PDO::PARAM_STR);
             $stmt->bindValue(':expcomment', $this->income_comment, PDO::PARAM_STR);
 
@@ -72,9 +72,13 @@ class Income extends \Core\Model
         if ($this->amount == '') {
             $this->errors[] = 'Amount is required';
         }
+        else if (!is_numeric($this->amount)){
+            $this->errors[] = 'Amount must be numeric!';
+        }
         if ($this->income_category == '') {
             $this->errors[] = 'Type of income is required';
         }
+        
     }
 
     /**

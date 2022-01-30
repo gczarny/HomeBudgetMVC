@@ -27,7 +27,9 @@ class Dashboard extends Authenticated
         parent::before(); //so we will not override
 
         $this->user = Auth::getUser();
-        
+        $this->incomeList = Income::getIncomeCategory();
+        $this->expenseList = Expense::getExpenseCategory();
+        $this->paymentList = Expense::getPaymentMethod();
     }
 
     /**
@@ -56,7 +58,6 @@ class Dashboard extends Authenticated
      */
     public function addincomeAction()
     {
-        $this->incomeList = Income::getIncomeCategory();
         View::renderTemplate('Dashboard/addincome.html', [
             'incomeList' => $this->incomeList,
             'user' => $this->user
@@ -70,8 +71,6 @@ class Dashboard extends Authenticated
      */
     public function addexpenseAction()
     {
-        $this->expenseList = Expense::getExpenseCategory();
-        $this->paymentList = Expense::getPaymentMethod();
         View::renderTemplate('Dashboard/addexpense.html', [
             'expenseList' => $this->expenseList,
             'paymentList' => $this->paymentList,
@@ -109,6 +108,20 @@ class Dashboard extends Authenticated
     }
 
     /**
+     * Show overview balance view
+     * 
+     * @return void
+     */
+    public function showoverviewAction()
+    {
+        $this->overallTable = Balance::getOverallTable($_POST);
+        View::renderTemplate('Dashboard/showoverview.html', [
+            'overallTable' => $this->overallTable,
+            'user' => $this->user
+        ]);
+    }
+
+    /**
      * Add expense to database
      * 
      * @return void
@@ -122,7 +135,10 @@ class Dashboard extends Authenticated
             $this->redirect('/dashboard/addexpense');
         } else {
             View::renderTemplate('Dashboard/addexpense.html', [
-                'expense' => $expense
+                'user' => $this->user,
+                'expense' => $expense,
+                'expenseList' => $this->expenseList,
+                'paymentList' => $this->paymentList,
             ]);
 
         }
@@ -142,14 +158,11 @@ class Dashboard extends Authenticated
             $this->redirect('/dashboard/addincome');
         } else {
             View::renderTemplate('Dashboard/addincome.html', [
-                'income' => $income
+                'user' => $this->user,
+                'income' => $income,
+                'incomeList' => $this->incomeList
             ]);
 
         }
     }
-
-    /**
-     * 
-     */
-
 }

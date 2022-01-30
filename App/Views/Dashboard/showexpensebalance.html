@@ -5,16 +5,117 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function() {
+$(document).ready(function() {
 
-        var expenseRecords = $('#expenseListing').DataTable();
+  $(function() {
+    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+    var firstDay = new Date(y, m, 1);
+    var lastDay = new Date(y, m + 1, 0);
+    var start = moment(firstDay);
+    var end = moment(lastDay);
+
+    function cb(start, end) {
+      $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+    }
+    $('#reportrange').daterangepicker({
+      startDate: start,
+      endDate: end,
+      ranges: {
+        'Today': [moment(), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      }
+    }, cb);
+
+    cb(start, end);
+  });
+
+  $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
+  var start = picker.startDate.format('YYYY-MM-DD');
+  var end = picker.endDate.format('YYYY-MM-DD');
+
+  $.fn.dataTable.ext.search.push(
+    function(settings, data, dataIndex) {
+      var min = new Date(start);
+      var max = new Date(end);
+      var startDate = new Date(data[4]);
+      console.log(startDate +  " <= " + max  + " --- "  + (startDate <= max));
+      
+      if (min == null && max == null) {
+        return true;
+      }
+      if (min == null && startDate <= max) {
+        return true;
+      }
+      if (max == null && startDate >= min) {
+        return true;
+      }
+      if (startDate <= max && startDate >= min) {
+        return true;
+      }
+      return false;
+    }
+  );
+  table.draw();
+  $.fn.dataTable.ext.search.pop();
+  });
+  jQuery.fn.dataTable.Api.register( 'sum()', function ( ) {
+    return this.flatten().reduce( function ( a, b ) {
+      if ( typeof a === 'string' ) {
+        a = a.replace(/[^\d.-]/g, '') * 1;
+      }
+      if ( typeof b === 'string' ) {
+        b = b.replace(/[^\d.-]/g, '') * 1;
+      }
+
+      return a + b;
+    }, 0 );
+  } );
+  //var table = $('#expenseListing').DataTable();
+  //var total = table.column( 1 ).data().sum();
+  var table = $('#expenseListing').DataTable({
+    "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+ 
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+ 						
+            // Total over all pages
+            total = api
+                .column( 1 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+ 
+            // Total over this page
+            pageTotal = api
+                .column( 1, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+ 						
+            // Update status DIV
+            $('#status').html('<b>OVERALL:</b> <u>'+ total + '</u>');
+            $('#statuscurrent').html('<b>Selected period:</b> <u>'+ pageTotal + '</u>');
+        }
     });
-  </script>
+});
+</script>
 
 {% endblock %}
 {% block breadcrumb %}Show expenses balance{% endblock %}
 
-{% block cardtitle %} See your balance here {% endblock %}
+{% block cardtitle %} Expenses {% endblock %}
 
 {% block cardbody %}
 <div class="row align-items-center justify-content-center">
@@ -27,6 +128,19 @@
     {% endif %}
 
 </div>
+<div class="row">
+  <div class="col-lg-6">
+    <div id="reportrange" class="btn btn-primary btn-lg mb-2">
+      <span></span> <b class="caret"></b>
+    </div>
+  </div>
+  <div class="col-sm-4 align-items-center justify-content-center text-center">
+    <div class="mb-2" id="status"></div>
+    <div class="" id="statuscurrent"></div>
+  </div>
+</div>
+    
+
 <table id="expenseListing" class="table table-bordered table-striped" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
     <thead>
       <tr>
