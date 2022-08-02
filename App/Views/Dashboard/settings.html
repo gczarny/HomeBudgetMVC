@@ -1,0 +1,338 @@
+{% extends 'base_dashboard.html' %}
+
+{% block title %}Settings{% endblock %}
+{% block footer_scripts %}
+
+<script src="/js/hideShowPassword.min.js"></script>
+<script src="/js/settings.js"></script>
+
+<script>
+$(document).ready(function() {
+
+});
+</script>
+
+{% endblock %}
+{% block breadcrumb %} Settings {% endblock %}
+
+{% block cardtitle %} Settings {% endblock %}
+{% block cardbody %}
+<div class="row align-items-center justify-content-center">
+    {% if editCategory.errors is not empty %}
+    <ul style="list-style-type:none;" class="text-center error">
+        {% for error in editCategory.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+</div>
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  Income Categories
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <ul class="list-group" id="list-incomes">
+                        {% for incomes in incomeList %}
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" value="{{ incomes.id }}">
+                            <div class="col-auto mr-auto">
+                                {{ incomes.name }}
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" data-id="{{ incomes.id }}" data-name="{{ incomes.name }}" class="btn btn-warning btn-xs updateIncome">
+                                    <span class="fas fa-edit fa-fw" title="Edit"></span>
+                                </button>
+                                <button type="button" name="delete" id="{{ incomes.id }}" class="btn btn-danger btn-xs delete" >
+                                   <span class="fas fa-trash fa-fw" title="Delete"></span>
+                                </button>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="row pb-2 pt-2">
+                        <div class="d-grid col-3 mx-auto">
+                            <button type="button" name="addIncomeCategory" class="btn btn-success btn-sm addIncomeCategory">
+                                <span class="fas fa-plus fa-fw" title="Add category"></span>Add category
+                            </button>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Expense Categories
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <ul class="list-group" id="list-expenses">
+                        {% for expenses in expenseList %}
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" value="{{ expenses.id }}">
+                            <div class="col-auto mr-auto">
+                                {{ expenses.name }}
+                            </div>
+                            <div class="col-auto">
+                                {% if expenses.is_limit %}
+                                <span class="badge text-dark bg-light rounded-pill">Limit: {{ expenses.limit_set }}</span>
+                                {% endif %}
+                                <button type="button" data-id="{{ expenses.id }}" data-name="{{ expenses.name }}" data-limit="{{ expenses.limit_set }}" class="btn btn-warning btn-xs updateExpense">
+                                    <span class="fas fa-edit fa-fw" title="Edit"></span>
+                                </button>
+                                <button type="button" name="delete" id="{{ expenses.id }}" class="btn btn-danger btn-xs delete" >
+                                    <span class="fas fa-trash fa-fw" title="Delete"></span>
+                                 </button>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="row pb-2 pt-2">
+                        <div class="d-grid col-3 mx-auto">
+                            <button type="button" name="addExpenseCategory" class="btn btn-success btn-sm addExpenseCategory">
+                                <span class="fas fa-plus fa-fw" title="Add category"></span>Add category
+                            </button>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  Payment Categories
+                </button>
+              </h2>
+              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <ul class="list-group" id="list-payments">
+                        {% for payment in paymentList %}
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" value="{{ payment.id }}">
+                            <div class="col-auto mr-auto">
+                                {{ payment.name }}
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" data-id="{{ payment.id }}" data-name="{{ payment.name }}" class="btn btn-warning btn-xs updatePayment">
+                                    <span class="fas fa-edit fa-fw" title="Edit"></span>
+                                </button>
+                                <button type="button" name="delete" id="{{ payment.id }}" class="btn btn-danger btn-xs delete" >
+                                    <span class="fas fa-trash fa-fw" title="Delete"></span>
+                                 </button>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="row pb-2 pt-2">
+                        <div class="d-grid col-3 mx-auto">
+                            <button type="button" name="addPaymentCategory" class="btn btn-success btn-sm AddPaymentMethod">
+                                <span class="fas fa-plus fa-fw" title="Add category"></span>Add category
+                            </button>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    <!-- Modal Income -->
+    <div class="modal fade" id="staticIncomeModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticIncomeLabel">Edit category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageEditIncome"></div>
+                    </div>
+                    <form method="post" id="formIncome" type="form">
+                        <div class="form-group mb-3"> 
+                            <label for="incomeCategory">Income category</label>
+                            <input id="incomeCategory" name="incomeCategory" placeholder="Income name" value="{{ incomes.id }}"  
+                            class="form-control" required/>
+                        </div>
+                        <div class="row">
+                            <div class='d-grid col-3 mx-auto'>
+                                <button class="btn btn-primary edit" type="submit">Save</button>
+                            </div>
+                            <div class='d-grid col-3 mx-auto'>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Expense -->
+    <div class="modal fade" id="staticExpenseModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="staticExpenseLabel">Edit category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageEditExpense"></div>
+                    </div>
+                    <input id="test" value="{{ expenses.id }}" hidden></p>
+                    <form method="post" id="formExpense" type="form">
+                        <div class="form-group mb-3"> 
+                            <label for="expenseCategory">Expense category</label>
+                            <input id="expenseCategory" name="expenseCategory" placeholder="Expense name" value="{{ expenses.id }}"  
+                            class="form-control" required/>
+                        </div>
+                        <div class="form-group mb-3"> 
+                            <input class="form-check-input" type="checkbox" id="limitcheckbox">
+                            <label class="form-check-label" for="limitcheckbox">Add limit to category</label>
+                        </div>
+                        <div class="form-group mb-3"> 
+                            <label for="categoryLimit">Income Limit</label>
+                            <input id="categoryLimit" name="categoryLimit" placeholder="Expense limit" value="{{ expenses.id }}" 
+                            class="form-control" />
+                        </div>
+                        <div class="row">
+                            <div class='d-grid col-3 mx-auto'>
+                                <button class="btn btn-primary edit" type="submit">Save</button>
+                            </div>
+                            <div class='d-grid col-3 mx-auto'>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Payment -->
+    <div class="modal fade" id="staticPaymentModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticPaymentLabel">Edit category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageEditPayment"></div>
+                    </div>
+                    <input id="test" value="{{ payment.id }}" hidden></p>
+                    <form method="post" id="formPayment" type="form">
+                        <div class="form-group mb-3"> 
+                            <label for="paymentMethod">Payment category</label>
+                            <input id="paymentMethod" name="paymentMethod" placeholder="Payment name" value="{{ payment.id }}"  
+                                class="form-control" required/>
+                        </div>
+                        <div class="row">
+                            <div class='d-grid col-3 mx-auto'>
+                                <button class="btn btn-primary edit" type="submit">Save</button>
+                            </div>
+                            <div class='d-grid col-3 mx-auto'>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Modal Add Income Category -->
+        <div class="modal fade" id="staticAddIncomeCategoryModal" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticAddIncomeCategoryLabel">Add category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageAddIncCategory"></div>
+                        </div>
+                        <form method="post" id="formAddIncomeCategory" type="form">
+                            <div class="form-group mb-3"> 
+                                <label for="addIncomeCategory">Income category</label>
+                                <input id="addIncomeCategory" name="addIncomeCategory" placeholder="Income name" class="form-control" required/>
+                            </div>
+                            <div class="row">
+                                <div class='d-grid col-3 mx-auto'>
+                                    <button class="btn btn-primary edit" type="submit">Save</button>
+                                </div>
+                                <div class='d-grid col-3 mx-auto'>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Add Expense Category -->
+        <div class="modal fade" id="staticAddExpenseCategoryModal" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="staticAddExpenseCategoryLabel">Add category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageAddExpCategory"></div>
+                        </div>
+                        <form method="post" id="formAddExpenseCategory" type="form">
+                            <div class="form-group mb-3"> 
+                                <label for="addExpenseCategory">Expense category</label>
+                                <input id="addExpenseCategory" name="addExpenseCategory" placeholder="Expense name"
+                                class="form-control" required/>
+                            </div>
+                            <div class="row">
+                                <div class='d-grid col-3 mx-auto'>
+                                    <button class="btn btn-primary edit" type="submit">Save</button>
+                                </div>
+                                <div class='d-grid col-3 mx-auto'>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Add Payment Category -->
+        <div class="modal fade" id="staticAddPaymentCategoryModal" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="staticAddPaymentCategoryLabel">Add category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageAddPayCategory"></div>
+                        </div>
+                        <form method="post" id="formAddPaymentCategory" type="form">
+                            <div class="form-group mb-3"> 
+                                <label for="addPaymentCategory">Payment category</label>
+                                <input id="addPaymentCategory" name="addPaymentCategory" placeholder="Payment name"
+                                class="form-control" required/>
+                            </div>
+                            <div class="row">
+                                <div class='d-grid col-3 mx-auto'>
+                                    <button class="btn btn-primary edit" type="submit">Save</button>
+                                </div>
+                                <div class='d-grid col-3 mx-auto'>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

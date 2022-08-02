@@ -25,9 +25,11 @@ class Dashboard extends Authenticated
     protected function before()
     {
         parent::before(); //so we will not override
-
-        $this->user = Auth::getUser();
         
+        $this->user = Auth::getUser();
+        $this->incomeList = Income::getIncomeCategory();
+        $this->expenseList = Expense::getExpenseCategory();
+        $this->paymentList = Expense::getPaymentMethod();
     }
 
     /**
@@ -56,7 +58,6 @@ class Dashboard extends Authenticated
      */
     public function addincomeAction()
     {
-        $this->incomeList = Income::getIncomeCategory();
         View::renderTemplate('Dashboard/addincome.html', [
             'incomeList' => $this->incomeList,
             'user' => $this->user
@@ -70,14 +71,12 @@ class Dashboard extends Authenticated
      */
     public function addexpenseAction()
     {
-        $this->expenseList = Expense::getExpenseCategory();
-        $this->paymentList = Expense::getPaymentMethod();
+        $this->expenseTable = Balance::getExpenseRecords();
         View::renderTemplate('Dashboard/addexpense.html', [
             'expenseList' => $this->expenseList,
             'paymentList' => $this->paymentList,
             'user' => $this->user
         ]);
-        //var_dump($expenseList);
     }
 
     /**
@@ -109,6 +108,35 @@ class Dashboard extends Authenticated
     }
 
     /**
+     * Show overview balance view
+     * 
+     * @return void
+     */
+    public function showoverviewAction()
+    {
+        $overallTable = Balance::getOverallTable();
+        View::renderTemplate('Dashboard/showoverview.html', [
+            'overallTable' => $overallTable,
+            'user' => $this->user
+        ]);
+    }
+
+    /**
+     * Show settings view
+     * 
+     * @return void
+     */
+    public function settingsAction()
+    {
+        View::renderTemplate('Dashboard/settings.html', [
+            'incomeList' => $this->incomeList,
+            'expenseList' => $this->expenseList,
+            'paymentList' => $this->paymentList,
+            'user' => $this->user
+        ]);
+    }
+
+    /**
      * Add expense to database
      * 
      * @return void
@@ -122,7 +150,10 @@ class Dashboard extends Authenticated
             $this->redirect('/dashboard/addexpense');
         } else {
             View::renderTemplate('Dashboard/addexpense.html', [
-                'expense' => $expense
+                'user' => $this->user,
+                'expense' => $expense,
+                'expenseList' => $this->expenseList,
+                'paymentList' => $this->paymentList,
             ]);
 
         }
@@ -142,14 +173,283 @@ class Dashboard extends Authenticated
             $this->redirect('/dashboard/addincome');
         } else {
             View::renderTemplate('Dashboard/addincome.html', [
-                'income' => $income
+                'user' => $this->user,
+                'income' => $income,
+                'incomeList' => $this->incomeList
             ]);
-
         }
     }
 
     /**
+     * Add income category to database
      * 
+     * @return void
      */
+    public function addincomecategoryAction()
+    {
+        $income = new Income($_POST);
 
+        if ($income->addIncomeCategory()) {
+            Flash::addMessage('Category added');
+            $response['status'] = 'success';
+            echo json_encode($response);
+            //return true;
+        } else {
+            //$errors = array($limit->errors);
+            $response['errors'] = $income->errors;
+            echo json_encode($response);
+        }
+    }
+
+    /**
+     * Add expense category to database
+     * 
+     * @return void
+     */
+    public function addexpensecategoryAction()
+    {
+        $expense = new Expense($_POST);
+
+        if ($expense->addExpenseCategory()) {
+            Flash::addMessage('Category added');
+            $response['status'] = 'success';
+            echo json_encode($response);
+            //return true;
+        } else {
+            //$errors = array($limit->errors);
+            $response['errors'] = $expense->errors;
+            echo json_encode($response);
+        }
+    }
+
+    /**
+     * Add payment category to database
+     * 
+     * @return void
+     */
+    public function addpaymentcategoryAction()
+    {
+        $payment = new Expense($_POST);
+
+        if ($payment->addPaymentCategory()) {
+            Flash::addMessage('Method added');
+            $response['status'] = 'success';
+            echo json_encode($response);
+            //return true;
+        } else {
+            //$errors = array($limit->errors);
+            $response['errors'] = $payment->errors;
+            echo json_encode($response);
+        }
+    }
+
+    /**
+     * Delete selected income
+     * 
+     * @return void
+     */
+    public function deleteincomeAction()
+    {
+        if(!empty($_POST['action'])){
+            if($this->user){
+                if(Income::deleteIncome($_POST['id'])){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+    }
+
+    /**
+     * Delete selected expense
+     * 
+     * @return void
+     */
+    public function deleteexpenseAction()
+    {
+        if(!empty($_POST['action'])){
+            $id = $_POST['id'];
+            if($this->user){
+                if(Expense::deleteExpense($id)){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+    }
+
+    /**
+     * Modify income category
+     * 
+     * @return void
+     */
+    public function editincomecategoryAction()
+    {
+        $response = [];
+        $limit = new Income($_POST);
+
+        if ($limit->editIncomeCategory()) {
+            Flash::addMessage('Category changed');
+            $response['status'] = 'success';
+            echo json_encode($response);
+            //return true;
+        } else {
+            //$errors = array($limit->errors);
+            $response['errors'] = $limit->errors;
+            echo json_encode($response);
+        }
+    }
+
+    /**
+     * Modify income category
+     * 
+     * @return void
+     */
+    public function editexpensecategoryAction()
+    {
+        $response = [];
+        $expcateg = new Expense($_POST);
+
+        if ($expcateg->editExpenseCategory()) {
+            Flash::addMessage('Category changed');
+            $response['status'] = 'success';
+            echo json_encode($response);
+            //return true;
+        } else {
+            $response['errors'] = $expcateg->errors;
+            echo json_encode($response);
+        }
+    }
+
+    /**
+     * Modify payment method
+     * 
+     * @return void
+     */
+    public function editpaymentmethodAction()
+    {
+        $response = [];
+        $paymethod = new Expense($_POST);
+
+        if ($paymethod->editPaymentMethod()) {
+            Flash::addMessage('Method changed');
+            $response['status'] = 'success';
+            echo json_encode($response);
+            //return true;
+        } else {
+            $response['errors'] = $paymethod->errors;
+            echo json_encode($response);
+        }
+    }
+
+    /**
+     * Delete income category
+     * 
+     * @return void
+     */
+    public function deleteincomecategoryAction()
+    {
+        if(!empty($_POST['action'])){
+            if($this->user){
+                if(Income::deleteIncomeCategory($_POST['id'])){
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        return false;
+    }
+    
+    /**
+     * Delete expense category
+     * 
+     * @return void
+     */
+    public function deleteexpensecategoryAction()
+    {
+        if(!empty($_POST['action'])){
+            if($this->user){
+                if(Expense::deleteExpenseCategory($_POST['id'])){
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Delete payment method
+     * 
+     * @return void
+     */
+    public function deletepaymentmethodAction()
+    {
+        if(!empty($_POST['action'])){
+            if($this->user){
+                if(Expense::deletePaymentMethod($_POST['id'])){
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Get expense sum
+     * 
+     * @return void
+     */
+    public function getexpensesumAction()
+    {
+        $expcateg = new Expense($_POST);
+        //$elo = $_POST['name'];
+        if($this->user){
+            $response['status'] = 'success';
+            $response[] = $expcateg->getExpenseSum();
+            echo json_encode($response);
+        }
+        return false;
+    }
+
+    /**
+     * check if limit is set
+     * 
+     * @return void
+     */
+    public function checklimitexistsAction()
+    {
+        $limitExists = new Expense($_POST);
+        //$elo = $_POST['name'];
+        if($this->user){
+            //$response['islimit'] = 'success';
+            $response[] = $limitExists->checkLimitExists();
+            echo json_encode($response);
+        }
+        return false;
+    }
+
+    /**
+     * Get expense limit
+     * 
+     * @return void
+     */
+    public function getexpenselimitAction()
+    {
+        $expcateg = new Expense($_POST);
+        if($this->user){
+            //$row = Expense::getExpenseSum()
+            $response = $expcateg->getExpenseSum();
+            echo json_encode($response);
+        }
+        return false;
+    }
 }

@@ -26,6 +26,7 @@ class Balance extends \Core\Model
         };
     }
 
+
     /**
      * Get expense category list
      * 
@@ -75,7 +76,7 @@ class Balance extends \Core\Model
     /**
      * Get all income
      * 
-     * @return amount summ amount 
+     * @return float summ amount 
      */
     public static function getAllIncome()
     {
@@ -87,13 +88,13 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
      * Get month income
      * 
-     * @return amount summ amount from current month
+     * @return float summ amount from current month
      */
     public static function getMonthIncome()
     {
@@ -105,13 +106,13 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
      * Get today income
      * 
-     * @return amount summ today's amount 
+     * @return float summ today's amount 
      */
     public static function getTodayIncome()
     {
@@ -123,13 +124,13 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
      * Get all expense
      * 
-     * @return amount summ amount 
+     * @return float summ amount 
      */
     public static function getAllExpense()
     {
@@ -141,13 +142,13 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
      * Get month expense
      * 
-     * @return amount summ amount from current month
+     * @return float summ amount from current month
      */
     public static function getMonthExpense()
     {
@@ -159,13 +160,13 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
      * Get today expense
      * 
-     * @return amount summ today's amount 
+     * @return float summ today's amount 
      */
     public static function getTodayExpense()
     {
@@ -177,13 +178,13 @@ class Balance extends \Core\Model
         $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
         $stmt->execute();
         $amount = $stmt->fetch(PDO::FETCH_ASSOC);
-        return number_format($amount['Amount']);
+        return number_format((float)$amount['Amount']);
     }
 
     /**
      * Get today expense
      * 
-     * @return amount summ today's amount 
+     * @return mixed summ today's amount 
      */
     public static function getAmountByMonthToChart()
     {
@@ -203,7 +204,7 @@ class Balance extends \Core\Model
     /**
      * Get today expense
      * 
-     * @return amount summ today's amount 
+     * @return mixed summ today's amount 
      */
     public static function getDateToChart()
     {
@@ -216,6 +217,32 @@ class Balance extends \Core\Model
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
 
+    /**
+     * Get table of incomes and expenses
+     * 
+     * @return mixed table of incomes and expenses
+     */
+    public static function getOverallTable()
+    {
+        $sql = 'SELECT income.id, income.amount, income.date_of_income AS date, category.name, NULL as payname, income.income_comment AS comment, "income" AS source
+                FROM incomes AS income 
+                LEFT JOIN incomes_category_assigned_to_users AS category ON income.income_category_assigned_to_user_id = category.id 
+                WHERE income.user_id = :user_id
+                UNION
+                SELECT expense.id, expense.amount, expense.date_of_expense AS date, category.name, payment.name AS payname, expense.expense_comment AS comment, "expense" AS source
+                FROM expenses AS expense 
+                LEFT JOIN expenses_category_assigned_to_users AS category ON expense.expense_category_assigned_to_user_id = category.id
+                LEFT JOIN payment_methods_assigned_to_users AS payment ON expense.payment_method_assigned_to_user_id = payment.id
+                WHERE expense.user_id = :user_id';
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
+

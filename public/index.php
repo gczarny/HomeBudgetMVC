@@ -39,6 +39,15 @@ $router->add('logout', ['controller' => 'Login', 'action' => 'destroy']);
 $router->add('password/reset/{token:[\da-f]+}', ['controller' => 'Password', 'action' => 'reset']);
 $router->add('signup/activate/{token:[\da-f]+}', ['controller' => 'Signup', 'action' => 'activate']);
 $router->add('dashboard', ['controller' => 'Dashboard', 'action' => 'index']);
+$router->add('dashboard/addincome', ['controller' => 'Dashboard', 'action' => 'addincome']);
+$router->add('dashboard/addexpense', ['controller' => 'Dashboard', 'action' => 'addexpense']);
+$router->add('dashboard/showincomebalance', ['controller' => 'Dashboard', 'action' => 'showincomebalance']);
+$router->add('dashboard/showexpensebalance', ['controller' => 'Dashboard', 'action' => 'showexpensebalance']);
+$router->add('dashboard/showoverview', ['controller' => 'Dashboard', 'action' => 'showoverview']);
+//$router->add('dashboard/deleteincome', ['controller' => 'Dashboard', 'action' => 'deleteincome']);
+//$router->add('dashboard/deleteexpense', ['controller' => 'Dashboard', 'action' => 'deleteexpense']);
+$router->add('dashboard/settings', ['controller' => 'Dashboard', 'action' => 'settings']);
+//$router->add('dashboard/editincomecategory', ['controller' => 'Dashboard', 'action' => 'editincomecategory']);
 $router->add('{controller}/{action}');
     
 $router->dispatch($_SERVER['QUERY_STRING']);

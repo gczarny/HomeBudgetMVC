@@ -1,68 +1,90 @@
 {% extends 'base_dashboard.html' %}
 
 {% block title %}Add Income{% endblock %}
+
+{% block breadcrumb %} Add income {% endblock %}
+
+{% block cardtitle %} Manage your incomes {% endblock %}
 {% block footer_scripts %}
     <script>
+        $("#inputAmount").on("keyup", function(){
+            var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
+                val = this.value;
+            var pos = this.selectionStart - 1;
+            
+            if(!valid){
+                if(typeof this.lastValid != "undefined") {
+                    this.value = this.lastValid
+                    this.setSelectionRange(pos, pos);
+                } else {
+                    this.value = "";
+                }
+            } else {
+                this.lastValid = val;
+            }
+        });
         $(document).ready(function() {
-
+            $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd'}).datepicker("setDate", new Date());
             /**
              * Validate the form
              */
             $('#formAddIncome').validate({
                 rules: {
-                    amount: 'required',
-                    income_category: 'required',
+                    amount: {
+                        required: true
+                        //number:true
+                    },
+                    date: 'dateISO',
+                    income_category: 'required'
                 },
                 messages: {
-                    amount: 'Amount is required',
-                    income_category: 'Type of income is required',
+                    income_category: 'Type of income is required'
                 }
+               
             });
+            
         });
     </script>
 
 {% endblock %}
-{% block breadcrumb %} Add income {% endblock %}
-
-{% block cardtitle %} Manage your incomes {% endblock %}
-
 {% block cardbody %}
 <div class="row align-items-center justify-content-center">
     {% if income.errors is not empty %}
-    <ul class="text-center error">
+    <ul style="list-style-type:none;" class="text-center error">
         {% for error in income.errors %}
         <li>{{ error }}</li>
         {% endfor %}
     </ul>
     {% endif %}
 </div>
-<form method="post" action="/dashboard/createincome" id="formAddIncome">
-    <div class="form-group mb-2">
-        <label for="inputAmount">Amount</label>
-        <input id="inputAmount" class="form-control" name="amount" placeholder="Amount"
-            value="{{ income.amount }}" autocomplete="off" />
-    </div>
-    <div class="form-group mb-2">
-        <label for="inputDate">Date</label>
-        <input type="date" id="inputDate" class="form-control" name="date" placeholder="Date"
-            value="{{ income.date }}" />
-    </div>
-    <div class="form-group mb-2">
-        <label for="inputIncCategory">Category</label>
-        <select class="form-control" id="inputIncCategory" name="income_category">
-            <option value="">Select Category</option>
-            {% for income in incomeList %}
-                <option value="{{ income.id }}">{{ income.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="form-group mb-2">
-        <label for="inputComment">Comment</label>
-        <input id="inputComment" class="form-control" name="income_comment"
-        value="{{ income.comment }}" placeholder="Comment" />
-    </div>
+<div class="col-lg-6 ">
+    <form method="post" action="/dashboard/createincome" id="formAddIncome">
+        <div class="form-group mb-2">
+            <label for="inputAmount">Amount</label>
+            <input id="inputAmount" class="form-control" name="amount" placeholder="Amount"
+                value="{{ income.amount }}" autocomplete="off" />
+        </div>
+        <div class="form-group mb-2">
+            <label for="datepicker">Date</label>
+            <input type="text" id="datepicker" class="form-control" name="date" placeholder="Date"
+                value="{{ income.date }}" />
+        </div>
+        <div class="form-group mb-2">
+            <label for="inputIncCategory">Category</label>
+            <select class="form-control" id="inputIncCategory" name="income_category">
+                <option value="">Select Category</option>
+                {% for income in incomeList %}
+                    <option value="{{ income.id }}">{{ income.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group mb-2">
+            <label for="inputComment">Comment</label>
+            <input id="inputComment" class="form-control" name="income_comment"
+            value="{{ income.comment }}" placeholder="Comment" />
+        </div>
 
-    <button type="submit" class="btn btn-primary">Save income</button>
-</form>
-
+        <button type="submit" class="btn btn-primary">Save income</button>
+    </form>
+</div>
 {% endblock %}

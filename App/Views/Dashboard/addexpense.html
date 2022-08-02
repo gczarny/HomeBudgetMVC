@@ -2,24 +2,109 @@
 
 {% block title %}Add Expense{% endblock %}
 {% block footer_scripts %}
-    <script>
-        $(document).ready(function() {
 
+    <script>
+        function getdatalimit(str){
+            $.ajax({
+                method: "POST",
+                url: "/dashboard/getexpensesum",
+                dataType: 'html',
+                data: {'str' : str},
+                    success: function(res) {
+                        //console.log(res);
+                        var datas = JSON.parse(res);
+                        $("#txtHint").val(datas['0'].total);
+                    },
+                    error: function(res){
+                        //console.log(res);
+                        alert('Something went wrong');
+                    }     
+            });
+            $.ajax({
+                method: "POST",
+                url: "/dashboard/checklimitexists",
+                dataType: 'html',
+                data: {'str1' : str},
+                    success: function(res) {
+                        var datas1 = JSON.parse(res);
+                        $("#txtHint1").val(datas1['0'].limitisset);
+                        console.log(res);
+                    },
+                    error: function(res){
+                        alert('Something went wrong');
+                    }
+            });
+
+        return true;
+        }
+
+        function setValues(){
+            $("#messageOvc").hide(); 
+            $("#messageOvc").html(""); 
+            var isLimit1 = document.getElementById('txtHint1').value;
+            var categMinusLimit = document.getElementById('txtHint').value;
+            var amountVal = document.getElementById('inputAmount').value;
+            var categoryValue = document.getElementById('inputExpCategory').value;
+            if(amountVal > 0 && categoryValue > 0 && parseInt(isLimit1) > 0){
+                var difference = parseFloat(amountVal) + parseFloat(categMinusLimit);
+                 if(difference > 0 ){
+                    $("#messageOvc").show(); 
+                    $("#messageOvc").html("You will exceed your limit!"); 
+                 }        
+            }
+        }
+
+    $(document).ready(function() {
+
+            $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd'}).datepicker("setDate", new Date());
             /**
              * Validate the form
              */
             $('#formAddExpense').validate({
                 rules: {
-                    amount: 'required',
+                    amount: {
+                        required: true
+                        //number: true
+                    },
+                    date: 'dateISO',
                     expense_category: 'required',
                     expense_payment: 'required'
                 },
                 messages: {
-                    amount: 'Amount is required',
                     expense_category: 'Type of expense is required',
                     expense_payment: 'Method of payment is required'
                 }
             });
+            $('#inputAmount').on('change', function(){
+                var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
+                    val = this.value;
+                var pos = this.selectionStart - 1;
+                
+                if(!valid){
+                    if(typeof this.lastValid != "undefined") {
+                        this.value = this.lastValid
+                        this.setSelectionRange(pos, pos);
+                    } else {
+                        this.value = "";
+                    }
+                } else {
+                    this.lastValid = val;
+                }
+                if(this.value > 0){
+                    setValues();
+                }
+            });
+            $selectedDate = document.getElementById('datepicker').value;
+            $todaysDate = new Date();
+            
+            $('#inputExpCategory').change('change', function(e) {
+                $num_rows = mysqli_num_rows(expenseList);
+                $("#Testing").html($num_rows); 
+                if(getdatalimit(this.value)){
+                    setValues();
+                }
+            }); 
+
         });
     </script>
 
@@ -31,51 +116,63 @@
 {% block cardbody %}
 <div class="row align-items-center justify-content-center">
     {% if expense.errors is not empty %}
-    <ul class="text-center error">
+    <ul style="list-style-type:none;" class="text-center error">
         {% for error in expense.errors %}
         <li>{{ error }}</li>
         {% endfor %}
     </ul>
     {% endif %}
-
 </div>
-<div class="col-lg-6 ">
-    <form method="post" action="/dashboard/createexpense" id="formAddExpense">
-        <div class="form-group mb-2">
-            <label for="inputAmount">Amount</label>
-            <input id="inputAmount" class="form-control" name="amount" placeholder="Amount"
-                value="{{ expense.amount }}" autocomplete="off" />
-        </div>
-        <div class="form-group mb-2">
-            <label for="inputDate">Date</label>
-            <input type="date" id="inputDate" class="form-control" name="date" placeholder="Date"
-                value="{{ expense.date }}" />
-        </div>
-        <div class="form-group mb-2">
-            <label for="inputExpCategory">Category</label>
-            <select class="form-control" id="inputExpCategory" name="expense_category">
-                <option value="">Select Category</option>
-                {% for expense in expenseList %}
-                    <option value="{{ expense.id }}">{{ expense.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group mb-2">
-            <label for="inputPayment">Payment method</label>
-            <select class="form-control" id="inputPayment" name="expense_payment">
-                <option value="">Select Payment method</option>
-                {% for payment in paymentList %}
-                    <option value="{{ payment.id }}">{{ payment.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group mb-2">
-            <label for="inputComment">Comment</label>
-            <input id="inputComment" class="form-control" name="expense_comment"
-            value="{{ expense.comment }}" placeholder="Comment" />
-        </div>
+<div class="row">
+    <div class="col-lg-6 ">
+        <form method="post" action="/dashboard/createexpense" id="formAddExpense">
+            <input id="txtHint" name="amount" value="" autocomplete="off" />
+            <input id="txtHint1" name="amount" value="" autocomplete="off" />
+            <input id="txtHint2" name="amount" value="" autocomplete="off" />
+            <div class="row">
+                <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageOvc"></div>
+            </div>
+            <div class="form-group mb-2 ">
+                <label for="inputAmount">Amount</label>
+                <input id="inputAmount" class="form-control" name="amount" placeholder="Amount"
+                    value="" autocomplete="off"/>
+            </div>
+            <div class="form-group mb-2">
+                <label for="datepicker">Date</label>
+                <input type="text" id="datepicker" class="form-control" name="date" placeholder="Date"
+                    value="{{ expense.date }}" />
+            </div>
+            <div class="form-group mb-2">
+                <label for="inputExpCategory">Category</label>
+                <select class="form-control" id="inputExpCategory" name="expense_category" onchange="getdatalimit(this.value)"> <!--  onchange="getdatalimit(this.value)"-->
+                    <option value="" >Select Category</option>
+                    {% for expense in expenseList %}
+                        <option value="{{ expense.id }}">{{ expense.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group mb-2">
+                <label for="inputPayment">Payment method</label>
+                <select class="form-control" id="inputPayment" name="expense_payment">
+                    <option value="">Select Payment method</option>
+                    {% for payment in paymentList %}
+                        <option value="{{ payment.id }}">{{ payment.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group mb-2">
+                <label for="inputComment">Comment</label>
+                <input id="inputComment" class="form-control" name="expense_comment"
+                value="{{ expense.comment }}" placeholder="Comment" />
+            </div>
 
-        <button type="submit" class="btn btn-primary">Save expense</button>
-    </form>
+            <button type="submit" class="btn btn-primary">Save expense</button>
+        </form>
+    </div>
+    <div class="col-lg-6 ">
+        <div class="row">
+            <div class="text-center align-items-center" style="color:red;" id="Testing"></div>
+        </div>
+    </div>
 </div>
 {% endblock %}
