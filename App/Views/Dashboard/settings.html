@@ -137,7 +137,7 @@ $(document).ready(function() {
               </div>
             </div>
         </div>
-    <!-- Modal Income -->
+    <!-- Modal Edit Income -->
     <div class="modal fade" id="staticIncomeModal" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -149,6 +149,7 @@ $(document).ready(function() {
                     <div class="row">
                         <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageEditIncome"></div>
                     </div>
+                    <input id="incomeID" value="{{ incomes.id }}" hidden></p>
                     <form method="post" id="formIncome" type="form">
                         <div class="form-group mb-3"> 
                             <label for="incomeCategory">Income category</label>
@@ -169,7 +170,7 @@ $(document).ready(function() {
         </div>
     </div>
 
-    <!-- Modal Expense -->
+    <!-- Modal Edit Expense -->
     <div class="modal fade" id="staticExpenseModal" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -181,7 +182,7 @@ $(document).ready(function() {
                     <div class="row">
                         <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageEditExpense"></div>
                     </div>
-                    <input id="test" value="{{ expenses.id }}" hidden></p>
+                    <input id="expenseID" value="{{ expenses.id }}" hidden></p>
                     <form method="post" id="formExpense" type="form">
                         <div class="form-group mb-3"> 
                             <label for="expenseCategory">Expense category</label>
@@ -193,7 +194,7 @@ $(document).ready(function() {
                             <label class="form-check-label" for="limitcheckbox">Add limit to category</label>
                         </div>
                         <div class="form-group mb-3"> 
-                            <label for="categoryLimit">Income Limit</label>
+                            <label for="categoryLimit">Expense Limit</label>
                             <input id="categoryLimit" name="categoryLimit" placeholder="Expense limit" value="{{ expenses.id }}" 
                             class="form-control" />
                         </div>
@@ -210,7 +211,7 @@ $(document).ready(function() {
             </div>
         </div>
     </div>
-    <!-- Modal Payment -->
+    <!-- Modal Edit Payment -->
     <div class="modal fade" id="staticPaymentModal" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -222,7 +223,7 @@ $(document).ready(function() {
                     <div class="row">
                         <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageEditPayment"></div>
                     </div>
-                    <input id="test" value="{{ payment.id }}" hidden></p>
+                    <input id="editPaymentID" value="{{ payment.id }}" hidden></p>
                     <form method="post" id="formPayment" type="form">
                         <div class="form-group mb-3"> 
                             <label for="paymentMethod">Payment category</label>

@@ -4,57 +4,16 @@
 {% block footer_scripts %}
 
     <script>
-        function getdatalimit(str){
-            $.ajax({
-                method: "POST",
-                url: "/dashboard/getexpensesum",
-                dataType: 'html',
-                data: {'str' : str},
-                    success: function(res) {
-                        //console.log(res);
-                        var datas = JSON.parse(res);
-                        $("#txtHint").val(datas['0'].total);
-                    },
-                    error: function(res){
-                        //console.log(res);
-                        alert('Something went wrong');
-                    }     
-            });
-            $.ajax({
-                method: "POST",
-                url: "/dashboard/checklimitexists",
-                dataType: 'html',
-                data: {'str1' : str},
-                    success: function(res) {
-                        var datas1 = JSON.parse(res);
-                        $("#txtHint1").val(datas1['0'].limitisset);
-                        console.log(res);
-                    },
-                    error: function(res){
-                        alert('Something went wrong');
-                    }
-            });
-
-        return true;
-        }
-
-        function setValues(){
-            $("#messageOvc").hide(); 
-            $("#messageOvc").html(""); 
-            var isLimit1 = document.getElementById('txtHint1').value;
-            var categMinusLimit = document.getElementById('txtHint').value;
-            var amountVal = document.getElementById('inputAmount').value;
-            var categoryValue = document.getElementById('inputExpCategory').value;
-            if(amountVal > 0 && categoryValue > 0 && parseInt(isLimit1) > 0){
-                var difference = parseFloat(amountVal) + parseFloat(categMinusLimit);
-                 if(difference > 0 ){
-                    $("#messageOvc").show(); 
-                    $("#messageOvc").html("You will exceed your limit!"); 
-                 }        
-            }
-        }
-
     $(document).ready(function() {
+
+            var categoryLimit;
+            var categoryLimitExists = 0;
+            var providedAmountByUser = 0;
+            var sumOfExpenses = 0;
+            var valueSelected = 0;
+
+            const objectExampleData = $('.object-example-container').data('exampleObjects')
+            //console.log(objectExampleData);
 
             $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd'}).datepicker("setDate", new Date());
             /**
@@ -76,6 +35,7 @@
                 }
             });
             $('#inputAmount').on('change', function(){
+                providedAmountByUser = $(this).val()
                 var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
                     val = this.value;
                 var pos = this.selectionStart - 1;
@@ -90,21 +50,59 @@
                 } else {
                     this.lastValid = val;
                 }
-                if(this.value > 0){
-                    setValues();
+                if(providedAmountByUser > 0){
+                    checkLimitExceeded(categoryLimitExists, categoryLimit, providedAmountByUser);
                 }
             });
-            $selectedDate = document.getElementById('datepicker').value;
-            $todaysDate = new Date();
-            
-            $('#inputExpCategory').change('change', function(e) {
-                $num_rows = mysqli_num_rows(expenseList);
-                $("#Testing").html($num_rows); 
-                if(getdatalimit(this.value)){
-                    setValues();
-                }
-            }); 
 
+
+            $('#inputExpCategory').change(function () {
+                sumOfExpenses = 0;
+                var optionSelected = $(this);
+                valueSelected  = optionSelected.val();
+                //textSelected   = optionSelected.text();
+                categoryLimitExists = optionSelected.find(':selected').attr('data-id');
+                categoryLimit = optionSelected.find(':selected').attr('data-entry-id');
+                if(providedAmountByUser >0 ){
+                    checkLimitExceeded(categoryLimitExists, categoryLimit, providedAmountByUser);
+                }
+                
+            });
+
+            function checkLimitExceeded(categoryLimitExists, categoryLimit, userAmount)
+            {
+                console.log(objectExampleData);
+                //console.log(categoryLimit);
+                //console.log(userAmount);
+                const d = new Date();
+                var dMonth = d.getMonth() + 1;
+                if(categoryLimitExists > 0){
+                    sumOfExpenses = 0;
+                    for ( var i = 0, l = objectExampleData.length; i < l; i++ ) {      
+                        var expenseDateIteration = new Date(objectExampleData[i].date_of_expense);
+                        var monthExtractionFromExpenseIteration = expenseDateIteration.getMonth() + 1;           
+                        if(valueSelected == objectExampleData[i].expense_category_assigned_to_user_id && monthExtractionFromExpenseIteration == dMonth){
+                            sumOfExpenses += parseFloat(objectExampleData[i].amount);
+                            console.log(sumOfExpenses);
+                        }
+                    }
+                    //console.log(sumOfExpenses);
+                    //console.log(parseFloat(providedAmountByUser) + parseFloat(sumOfExpenses));
+                    if(parseFloat(providedAmountByUser) + parseFloat(sumOfExpenses) > parseFloat(categoryLimit)){
+                        var valueExceeded = Math.abs(parseFloat(providedAmountByUser) + parseFloat(sumOfExpenses) - parseFloat(categoryLimit));
+                        //$('#messageOvc').html("You will exceed your limit!");
+                        $('#messageOvc').html("Total expenses: " + sumOfExpenses + " <br> Your current limit: " + categoryLimit + " <br>You will exceed your limit by: " + valueExceeded); 
+                    }
+                    else{
+                        $('#messageOvc').html("");
+                    }
+                }
+                else{
+                    sumOfExpenses = 0;
+                    $('#messageOvc').html("");
+                }
+            }
+        
         });
     </script>
 
@@ -126,11 +124,11 @@
 <div class="row">
     <div class="col-lg-6 ">
         <form method="post" action="/dashboard/createexpense" id="formAddExpense">
-            <input id="txtHint" name="amount" value="" autocomplete="off" />
-            <input id="txtHint1" name="amount" value="" autocomplete="off" />
-            <input id="txtHint2" name="amount" value="" autocomplete="off" />
+            <input id="txtHint" name="amount" value="" autocomplete="off" hidden/>
+            <input id="txtHint1" name="amount" value="" autocomplete="off" hidden/>
+            <input id="txtHint2" name="amount" value="" autocomplete="off" hidden/>
             <div class="row">
-                <div class="col-lg-6 ml-auto text-center align-items-center" style="color:red;" id="messageOvc"></div>
+                <div class="ml-auto align-items-center" style="color:red;" id="messageOvc"></div>
             </div>
             <div class="form-group mb-2 ">
                 <label for="inputAmount">Amount</label>
@@ -144,13 +142,23 @@
             </div>
             <div class="form-group mb-2">
                 <label for="inputExpCategory">Category</label>
-                <select class="form-control" id="inputExpCategory" name="expense_category" onchange="getdatalimit(this.value)"> <!--  onchange="getdatalimit(this.value)"-->
+                <select class="form-control" id="inputExpCategory" name="expense_category">
                     <option value="" >Select Category</option>
                     {% for expense in expenseList %}
-                        <option value="{{ expense.id }}">{{ expense.name }}</option>
+                        <option value="{{ expense.id }}" data-id="{{ expense.is_limit }}" data-entry-id="{{ expense.limit_set }}">
+                            {{ expense.name }}
+                        </option>
                     {% endfor %}
                 </select>
             </div>
+
+            {% set dataObjects =
+                expenseTable
+              %}
+             <div class="object-example-container"
+                data-example-objects="{{dataObjects|json_encode()}}"
+             ></div>
+
             <div class="form-group mb-2">
                 <label for="inputPayment">Payment method</label>
                 <select class="form-control" id="inputPayment" name="expense_payment">

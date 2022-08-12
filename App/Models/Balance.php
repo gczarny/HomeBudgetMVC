@@ -50,7 +50,7 @@ class Balance extends \Core\Model
     }
 
     /**
-     * Get expense category list
+     * Get expense records list
      * 
      * @return mixed Expense category object
      */
@@ -58,6 +58,30 @@ class Balance extends \Core\Model
     {
 
         $sql = 'SELECT expense.id, expense.amount, expense.date_of_expense, category.name, payment.name AS payname, expense.expense_comment
+                FROM expenses AS expense 
+                LEFT JOIN expenses_category_assigned_to_users AS category ON expense.expense_category_assigned_to_user_id = category.id
+                LEFT JOIN payment_methods_assigned_to_users AS payment ON expense.payment_method_assigned_to_user_id = payment.id
+                WHERE expense.user_id = :user_id';
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':user_id', Auth::getUserID(), PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**********************************************************************************************************************************************
+     * Get expense records with assigned category list
+     * 
+     * @return mixed Expense category object
+     */
+    public static function getExpenseWithCategoriesRecords()
+    {
+
+        $sql = 'SELECT expense.id, expense.amount, expense.date_of_expense, expense.expense_category_assigned_to_user_id, category.name, payment.name AS payname, expense.expense_comment
                 FROM expenses AS expense 
                 LEFT JOIN expenses_category_assigned_to_users AS category ON expense.expense_category_assigned_to_user_id = category.id
                 LEFT JOIN payment_methods_assigned_to_users AS payment ON expense.payment_method_assigned_to_user_id = payment.id

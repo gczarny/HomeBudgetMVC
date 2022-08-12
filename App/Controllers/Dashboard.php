@@ -71,10 +71,12 @@ class Dashboard extends Authenticated
      */
     public function addexpenseAction()
     {
-        $this->expenseTable = Balance::getExpenseRecords();
+        //$this->expenseTable = Balance::getExpenseRecords();
+        $this->expenseTable = Balance::getExpenseWithCategoriesRecords();
         View::renderTemplate('Dashboard/addexpense.html', [
             'expenseList' => $this->expenseList,
             'paymentList' => $this->paymentList,
+            'expenseTable' => $this->expenseTable,
             'user' => $this->user
         ]);
     }
@@ -290,16 +292,16 @@ class Dashboard extends Authenticated
     public function editincomecategoryAction()
     {
         $response = [];
-        $limit = new Income($_POST);
+        $editIncome = new Income($_POST);
 
-        if ($limit->editIncomeCategory()) {
+        if ($editIncome->editIncomeCategory()) {
             Flash::addMessage('Category changed');
             $response['status'] = 'success';
             echo json_encode($response);
             //return true;
         } else {
             //$errors = array($limit->errors);
-            $response['errors'] = $limit->errors;
+            $response['errors'] = $editIncome->errors;
             echo json_encode($response);
         }
     }

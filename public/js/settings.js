@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $(".updateIncome").click(function() {
-        $("#test").val("");
-        $("#test").val($(this).attr("data-id"));
+        //$("#incomeID").val("");
+        $("#incomeID").val($(this).attr("data-id"));
         $("#incomeCategory").val($(this).attr("data-name"));
         //var id = $(this).attr("data-id");
         $("#staticIncomeModal").modal("show");
@@ -11,6 +11,17 @@ $(document).ready(function() {
         $('#messageEditExpense').html('');
         $("#expenseCategory").val($(this).attr("data-name"));
         $("#categoryLimit").val($(this).attr("data-limit"));
+        $("#expenseID").val($(this).attr("data-id"));
+        var str = $("#expenseID").val();
+        
+        $("#staticExpenseModal").modal('show');
+        if ($("#limitcheckbox").prop('checked')) {
+            $("#categoryLimit").prop('disabled', false);
+        }
+        else
+        {
+            $("#categoryLimit").prop('disabled', true);
+        }
         $.ajax({
             method: "POST",
             url: "/dashboard/checklimitexists",
@@ -18,27 +29,37 @@ $(document).ready(function() {
             data: {'str1' : str},
                 success: function(res) {
                     var datas1 = JSON.parse(res);
-                    $("#limitcheckbox").val(datas1['0'].limitisset);
+                    console.log(datas1['0'].limitisset);
+                    //$("#limitcheckbox").val(datas1['0'].limitisset);
+                    if(datas1['0'].limitisset == "1"){
+                        $("#limitcheckbox").prop('checked', true);
+                        $("#categoryLimit").prop('disabled', false);
+                        $('#categoryLimit').attr('disabled', false).rules('add', {
+                              required: true,
+                              //pwcheckspechars: true,
+                              pwchecknumber: true
+                        });
+                        $('#limitcheckbox').val('1');
+                        $('input[type="submit"]').attr('disabled', false);
+                    }
+                    else{
+                        $("#limitcheckbox").prop('checked', false);
+                        $("#categoryLimit").prop('disabled', true);
+                        validator.resetForm()
+                        $('#categoryLimit').attr('disabled', true).rules('remove');
+                        $('#limitcheckbox').val('0');
+                        $('input[type="submit"]').attr('disabled', true);
+                    }
                 },
                 error: function(res){
                     alert('Something went wrong');
                 }
         });
-        $("#staticExpenseModal").modal("show");
-        if ($('#limitcheckbox').prop('checked')) {
-            $("#categoryLimit").prop("disabled", false);
-        }
-        else
-        {
-            $("#categoryLimit").prop("disabled", true);
-        }
-        
-        
     });
 
     $(".updatePayment").click(function() {
-        $("#test").val("");
-        $("#test").val($(this).attr("data-id"));
+        $("#editPaymentID").val("");
+        $("#editPaymentID").val($(this).attr("data-id"));
         $("#paymentMethod").val($(this).attr("data-name"));
         $("#staticPaymentModal").modal("show");
     });
@@ -101,8 +122,8 @@ $(document).ready(function() {
             var formData = {
                 name: $("#expenseCategory").val(),
                 categoryLimit: $("#categoryLimit").val(),
-                limitCheckbox: $("#limitcheckbox").val(), /* it will return true or false */
-                id: $("#test").val(),
+                limitCheckbox: $("#limitcheckbox").val(), 
+                id: $("#expenseID").val(),
             }; 
             $.ajax({
                 method: "POST",
@@ -145,7 +166,7 @@ $(document).ready(function() {
 		submitHandler: function(form) {
             var formData = {
                 name: $("#incomeCategory").val(),
-                id: $("#test").val(),
+                id: $("#incomeID").val(),
             }; 
             $.ajax({
                 method: "POST",
@@ -192,7 +213,7 @@ $(document).ready(function() {
 		submitHandler: function(form) {
             var formData = {
                 name: $("#paymentMethod").val(),
-                id: $("#test").val(),
+                id: $("#editPaymentID").val(),
             }; 
             $.ajax({
                 method: "POST",
