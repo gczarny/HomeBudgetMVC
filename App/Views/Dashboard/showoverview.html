@@ -84,8 +84,7 @@
         //var table = $('#incomeListing').DataTable();
         var table = $('#overviewListing').DataTable({
             "footerCallback": function(row, data, start, end, display) {
-                var api = this.api(),
-                    data;
+                var api = this.api(), data;
 
                 // Remove the formatting to get integer data for summation
                 var intVal = function(i) {
@@ -151,10 +150,10 @@
                 //var differenceView = viewTotalIncome - viewTotalExpense
                 differenceView = (Math.round((viewTotalIncome - viewTotalExpense) * 100) / 100).toFixed(2);
                 // Update status DIV
-                $('#totalExpense').html('<u>' + totalExpense + '</u>');
-                $('#viewTotalExpense').html('<u>' + viewTotalExpense + '</u>');
-                $('#totalIncome').html('<u>' + totalIncome + '</u>');
-                $('#viewTotalIncome').html('<u>' + viewTotalIncome + '</u>');
+                $('#totalExpense').html('<u>' + totalExpense.toFixed(2) + '</u>');
+                $('#viewTotalExpense').html('<u>' + viewTotalExpense.toFixed(2) + '</u>');
+                $('#totalIncome').html('<u>' + totalIncome.toFixed(2) + '</u>');
+                $('#viewTotalIncome').html('<u>' + viewTotalIncome.toFixed(2) + '</u>');
                 $('#differenceTotal').html('<u>' + differenceTotal + '</u>');
                 $('#differenceView').html('<u>' + differenceView + '</u>');
             }
@@ -231,7 +230,7 @@
         for (var i = 0; i < keys.length; i++) {
             var length = categoryCounts[keys[i]].length;
             var total = categoryCounts[keys[i]].reduce((a, b) => a + b, 0);
-            amount[keys[i]] = total / length;
+            amount[keys[i]] = total ;/// length;
         }
         return amount;
     }
@@ -270,7 +269,7 @@
             <div class="mb-2" id="differenceTotal"></div>
         </td>
     </tr>
-    <tr>
+    <!-- <tr>
         <td>Sum of displayed table</td>
         <td>
             <div class="mb-2" id="viewTotalExpense"></div>
@@ -281,7 +280,7 @@
         <td>
             <div class="mb-2" id="differenceView"></div>
         </td>
-    </tr>
+    </tr> -->
 </table>
 <hr>
 <div class="row align-items-center justify-content-center">

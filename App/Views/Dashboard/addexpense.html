@@ -5,17 +5,28 @@
 
     <script>
     $(document).ready(function() {
-
             var categoryLimit;
             var categoryLimitExists = 0;
             var providedAmountByUser = 0;
             var sumOfExpenses = 0;
-            var valueSelected = 0;
-
+            var expenseSumToDisplay = 0; var expenseSumToDisplayThisMonth = 0;
+            var categoryValueSelected = 0;
+            const d = new Date();
+            var dMonth = d.getMonth() + 1;
+            var selectedDate;
+            $('#hiddenLimitExceeded').html("");
             const objectExampleData = $('.object-example-container').data('exampleObjects')
             //console.log(objectExampleData);
-
+            for ( var i = 0, l = objectExampleData.length; i < l; i++ ) {      
+                var expenseDate = new Date(objectExampleData[i].date_of_expense);
+                var monthExtractionFromExpense = expenseDate.getMonth() + 1;  
+                expenseSumToDisplay += parseFloat(objectExampleData[i].amount);
+                if(monthExtractionFromExpense == dMonth){
+                    expenseSumToDisplayThisMonth += parseFloat(objectExampleData[i].amount);
+                }
+            }
             $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd'}).datepicker("setDate", new Date());
+            
             /**
              * Validate the form
              */
@@ -34,6 +45,7 @@
                     expense_payment: 'Method of payment is required'
                 }
             });
+            
             $('#inputAmount').on('change', function(){
                 providedAmountByUser = $(this).val()
                 var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
@@ -50,59 +62,108 @@
                 } else {
                     this.lastValid = val;
                 }
-                if(providedAmountByUser > 0){
-                    checkLimitExceeded(categoryLimitExists, categoryLimit, providedAmountByUser);
+                if(providedAmountByUser > 0 && checkSelectedMonthIsCurrent()){
+                    checkLimitExceeded(categoryLimitExists, categoryLimit);
+                }
+                else{
+                    hideLimit();
                 }
             });
-
+            $("#datepicker").on("change", function() {
+                if(!checkSelectedMonthIsCurrent()){
+                    hideLimit();
+                }
+                else{
+                    if(providedAmountByUser > 0 ){
+                        checkLimitExceeded(categoryLimitExists, categoryLimit);
+                    }
+                    
+                }
+            });
 
             $('#inputExpCategory').change(function () {
                 sumOfExpenses = 0;
                 var optionSelected = $(this);
-                valueSelected  = optionSelected.val();
+                categoryValueSelected  = $(this).val();
                 //textSelected   = optionSelected.text();
                 categoryLimitExists = optionSelected.find(':selected').attr('data-id');
                 categoryLimit = optionSelected.find(':selected').attr('data-entry-id');
-                if(providedAmountByUser >0 ){
-                    checkLimitExceeded(categoryLimitExists, categoryLimit, providedAmountByUser);
+                //if(providedAmountByUser >0 && checkSelectedMonthIsCurrent()){
+                    checkLimitExceeded(categoryLimitExists, categoryLimit);
+                //}
+                /*else{
+                    calculateSumOfSelectedCategory();
+                    $('#hiddenLimitExceededColumn').hide("slow");
+                    $('#hiddenLimitExceeded').html("");
+                }*/
+                if(categoryValueSelected > 0){
+                    $("#hiddenColumnExpenses").show("slow");
+                    $("#hiddenSumExpenses").html(sumOfExpenses);
+                    if(categoryLimitExists == '1'){
+                        $("#hiddenColumnLimit").show("slow");
+                        $("#hiddenLimit").html(categoryLimit);
+                    }
+                    else{
+                        $("#hiddenColumnLimit").hide("slow");
+                        $("#hiddenLimit").html("");
+                    }   
+                    
+                }
+                else{
+                    $("#hiddenColumnExpenses").hide("slow");
+                    $("#hiddenColumnLimit").hide("slow");
                 }
                 
             });
 
-            function checkLimitExceeded(categoryLimitExists, categoryLimit, userAmount)
-            {
-                console.log(objectExampleData);
-                //console.log(categoryLimit);
-                //console.log(userAmount);
-                const d = new Date();
-                var dMonth = d.getMonth() + 1;
-                if(categoryLimitExists > 0){
-                    sumOfExpenses = 0;
-                    for ( var i = 0, l = objectExampleData.length; i < l; i++ ) {      
+            function calculateSumOfSelectedCategory(){
+                for ( var i = 0, l = objectExampleData.length; i < l; i++ ) {      
                         var expenseDateIteration = new Date(objectExampleData[i].date_of_expense);
                         var monthExtractionFromExpenseIteration = expenseDateIteration.getMonth() + 1;           
-                        if(valueSelected == objectExampleData[i].expense_category_assigned_to_user_id && monthExtractionFromExpenseIteration == dMonth){
+                        if(categoryValueSelected == objectExampleData[i].expense_category_assigned_to_user_id && monthExtractionFromExpenseIteration == dMonth){
                             sumOfExpenses += parseFloat(objectExampleData[i].amount);
-                            console.log(sumOfExpenses);
+                            console.log(objectExampleData[i].date_of_expense);
+                            console.log(objectExampleData[i].amount);
+                            //console.log(sumOfExpenses);
                         }
                     }
-                    //console.log(sumOfExpenses);
-                    //console.log(parseFloat(providedAmountByUser) + parseFloat(sumOfExpenses));
+            }
+
+            function checkLimitExceeded(categoryLimitExists, categoryLimit)
+            {
+                //console.log(objectExampleData);
+                sumOfExpenses = 0;
+                calculateSumOfSelectedCategory();
+                if(categoryLimitExists > 0 && checkSelectedMonthIsCurrent() && providedAmountByUser > 0){
                     if(parseFloat(providedAmountByUser) + parseFloat(sumOfExpenses) > parseFloat(categoryLimit)){
-                        var valueExceeded = Math.abs(parseFloat(providedAmountByUser) + parseFloat(sumOfExpenses) - parseFloat(categoryLimit));
-                        //$('#messageOvc').html("You will exceed your limit!");
-                        $('#messageOvc').html("Total expenses: " + sumOfExpenses + " <br> Your current limit: " + categoryLimit + " <br>You will exceed your limit by: " + valueExceeded); 
+                        var valueExceeded = (Math.abs(parseFloat(providedAmountByUser) + parseFloat(sumOfExpenses) - parseFloat(categoryLimit))).toFixed(2);
+                        $('#hiddenLimitExceededColumn').show("slow");
+                        $("#hiddenLimitExceeded").html(valueExceeded)
                     }
                     else{
-                        $('#messageOvc').html("");
+                        hideLimit();
                     }
                 }
                 else{
-                    sumOfExpenses = 0;
-                    $('#messageOvc').html("");
+                    hideLimit();
                 }
             }
-        
+
+            function checkSelectedMonthIsCurrent()
+            {
+                var selDate = $("#datepicker").datepicker('getDate');
+                var current = moment(selDate);
+                if (moment().month()== current.month()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            
+            function hideLimit(){
+                $('#hiddenLimitExceededColumn').hide("slow");
+                $('#hiddenLimitExceeded').html("");
+            }
         });
     </script>
 
@@ -122,14 +183,12 @@
     {% endif %}
 </div>
 <div class="row">
-    <div class="col-lg-6 ">
+    <div class="col-lg-4 ">
         <form method="post" action="/dashboard/createexpense" id="formAddExpense">
             <input id="txtHint" name="amount" value="" autocomplete="off" hidden/>
             <input id="txtHint1" name="amount" value="" autocomplete="off" hidden/>
             <input id="txtHint2" name="amount" value="" autocomplete="off" hidden/>
-            <div class="row">
-                <div class="ml-auto align-items-center" style="color:red;" id="messageOvc"></div>
-            </div>
+            
             <div class="form-group mb-2 ">
                 <label for="inputAmount">Amount</label>
                 <input id="inputAmount" class="form-control" name="amount" placeholder="Amount"
@@ -177,9 +236,66 @@
             <button type="submit" class="btn btn-primary">Save expense</button>
         </form>
     </div>
-    <div class="col-lg-6 ">
+    <div class="col-lg-8 ">
         <div class="row">
-            <div class="text-center align-items-center" style="color:red;" id="Testing"></div>
+            <!-- Expenses (Monthly) Card  -->
+            <div class=" col-md-6 mb-4" id="hiddenColumnExpenses" style="display: none;">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs text-center font-weight-bold text-primary text-uppercase mb-1">
+                                    Expenses of selected category for the current month: 
+                                </div>
+                                <div class="h5 mb-0 text-center font-weight-bold text-gray-800" id="hiddenSumExpenses"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-funnel-dollar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Limit Card -->
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4" id="hiddenColumnLimit" style="display: none;">
+                <div class="card border-left-warning shadow h-100 py-2" id="card-trans-effect">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs text-center font-weight-bold text-warning text-uppercase mb-1">
+                                    Limit:
+                                </div>
+                                <div class="h5 text-center mb-0 font-weight-bold text-gray-800" id="hiddenLimit"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-balance-scale fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Limit exceeded Card  -->
+            <div class=" col-md-6 mb-4" id="hiddenLimitExceededColumn" style="display: none;">
+                <div class="card bg-gradient-danger border-left-danger shadow h-100 py-2" id="card-trans-effect">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs text-center font-weight-bold text-black text-uppercase mb-1">
+                                    You will exceed your limit by: 
+                                </div>
+                                <div class="h5 mb-0 text-center font-weight-bold text-gray-800" id="hiddenLimitExceeded"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-balance-scale-right fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
