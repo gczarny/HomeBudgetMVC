@@ -1,0 +1,5 @@
+# Ignore the venddor directory
+vendor/
+
+# Ignore the Config
+App/Config.php
