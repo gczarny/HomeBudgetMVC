@@ -29,15 +29,13 @@ $(document).ready(function() {
             data: {'str1' : str},
                 success: function(res) {
                     var datas1 = JSON.parse(res);
-                    console.log(datas1['0'].limitisset);
+                    //console.log(datas1['0'].limitisset);
                     //$("#limitcheckbox").val(datas1['0'].limitisset);
                     if(datas1['0'].limitisset == "1"){
                         $("#limitcheckbox").prop('checked', true);
                         $("#categoryLimit").prop('disabled', false);
                         $('#categoryLimit').attr('disabled', false).rules('add', {
-                              required: true,
-                              //pwcheckspechars: true,
-                              pwchecknumber: true
+                              required: true
                         });
                         $('#limitcheckbox').val('1');
                         $('input[type="submit"]').attr('disabled', false);
@@ -83,33 +81,33 @@ $(document).ready(function() {
         $("#staticAddPaymentCategoryModal").modal("show");
     });
 
-    $('[name="categoryLimit"]').on("keyup", function(){
-            var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
-                val = this.value;
-            var pos = this.selectionStart - 1;
+    // $('[name="categoryLimit"]').on("keyup", function(){
+    //         var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
+    //             val = this.value;
+    //         var pos = this.selectionStart - 1;
             
-            if(!valid){
-                if(typeof this.lastValid != "undefined") {
-                    this.value = this.lastValid
-                    this.setSelectionRange(pos, pos);
-                } else {
-                    this.value = "";
-                }
-            } else {
-                this.lastValid = val;
-            }
-    });
+    //         if(!valid){
+    //             if(typeof this.lastValid != "undefined") {
+    //                 this.value = this.lastValid
+    //                 this.setSelectionRange(pos, pos);
+    //             } else {
+    //                 this.value = "";
+    //             }
+    //         } else {
+    //             this.lastValid = val;
+    //         }
+    // });
 
-    var greaterThanZeroError = "Number should be grater than 0";
-    var noSpecialCharsError = "Numeric only!"
+    // var greaterThanZeroError = "Number should be grater than 0";
+    // var noSpecialCharsError = "Numeric only!"
 
-    $.validator.addMethod("pwcheckspechars", function (value) {
-        return /[!@#$Â£%^&*()_=\[\]{};':"\\|,.<>\/?+-]/.test(value)
-    }, noSpecialCharsError);
+    // $.validator.addMethod("pwcheckspechars", function (value) {
+    //     return /[!@#$Â£%^&*()_=\[\]{};':"\\|,.<>\/?+-]/.test(value)
+    // }, noSpecialCharsError);
 
-    $.validator.addMethod("pwchecknumber", function (value) {
-        return /^\s*(?=.*[1-9])\d*(?:\,\.\d{1,2})?\s*$/.test(value) // 
-    }, greaterThanZeroError);
+    // $.validator.addMethod("pwchecknumber", function (value) {
+    //     return /^\s*(?=.*[1-9])\d*(?:\,\.\d{1,2})?\s*$/.test(value) // 
+    // }, greaterThanZeroError);
 
     var validator = $('#staticExpenseModal #formExpense').validate({
 		rules: {
@@ -371,9 +369,8 @@ $(document).ready(function() {
     $('#limitcheckbox').click(function() {
         if($(this).is(':checked')) {
           $('#categoryLimit').attr('disabled', false).rules('add', {
-            required: true,
-            //pwcheckspechars: true,
-            pwchecknumber: true
+            required: true
+            //pwchecknumber: true
           });
           $('#limitcheckbox').val('1');
           $('input[type="submit"]').attr('disabled', false);

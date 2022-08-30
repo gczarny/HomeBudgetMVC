@@ -48,20 +48,20 @@
             
             $('#inputAmount').on('change', function(){
                 providedAmountByUser = $(this).val()
-                var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
-                    val = this.value;
-                var pos = this.selectionStart - 1;
+                // var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
+                //     val = this.value;
+                // var pos = this.selectionStart - 1;
                 
-                if(!valid){
-                    if(typeof this.lastValid != "undefined") {
-                        this.value = this.lastValid
-                        this.setSelectionRange(pos, pos);
-                    } else {
-                        this.value = "";
-                    }
-                } else {
-                    this.lastValid = val;
-                }
+                // if(!valid){
+                //     if(typeof this.lastValid != "undefined") {
+                //         this.value = this.lastValid
+                //         this.setSelectionRange(pos, pos);
+                //     } else {
+                //         this.value = "";
+                //     }
+                // } else {
+                //     this.lastValid = val;
+                // }
                 if(providedAmountByUser > 0 && checkSelectedMonthIsCurrent()){
                     checkLimitExceeded(categoryLimitExists, categoryLimit);
                 }
@@ -85,17 +85,9 @@
                 sumOfExpenses = 0;
                 var optionSelected = $(this);
                 categoryValueSelected  = $(this).val();
-                //textSelected   = optionSelected.text();
                 categoryLimitExists = optionSelected.find(':selected').attr('data-id');
                 categoryLimit = optionSelected.find(':selected').attr('data-entry-id');
-                //if(providedAmountByUser >0 && checkSelectedMonthIsCurrent()){
                     checkLimitExceeded(categoryLimitExists, categoryLimit);
-                //}
-                /*else{
-                    calculateSumOfSelectedCategory();
-                    $('#hiddenLimitExceededColumn').hide("slow");
-                    $('#hiddenLimitExceeded').html("");
-                }*/
                 if(categoryValueSelected > 0){
                     $("#hiddenColumnExpenses").show("slow");
                     $("#hiddenSumExpenses").html(sumOfExpenses);
@@ -124,7 +116,6 @@
                             sumOfExpenses += parseFloat(objectExampleData[i].amount);
                             console.log(objectExampleData[i].date_of_expense);
                             console.log(objectExampleData[i].amount);
-                            //console.log(sumOfExpenses);
                         }
                     }
             }
@@ -192,7 +183,8 @@
             <div class="form-group mb-2 ">
                 <label for="inputAmount">Amount</label>
                 <input id="inputAmount" class="form-control" name="amount" placeholder="Amount"
-                    value="" autocomplete="off"/>
+                    value="" autocomplete="off" type="number"  pattern="[0-9]+([\.,][0-9]+)?" step="0.01"
+                    title="This should be a number with up to 2 decimal places."/>
             </div>
             <div class="form-group mb-2">
                 <label for="datepicker">Date</label>
