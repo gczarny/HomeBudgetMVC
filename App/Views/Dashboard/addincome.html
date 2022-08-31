@@ -7,25 +7,8 @@
 {% block cardtitle %} Manage your incomes {% endblock %}
 {% block footer_scripts %}
     <script>
-        // $("#inputAmount").on("keyup", function(){
-        //     var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
-        //         val = this.value;
-        //     var pos = this.selectionStart - 1;
-            
-        //     if(!valid){
-        //         if(typeof this.lastValid != "undefined") {
-        //             this.value = this.lastValid
-        //             this.setSelectionRange(pos, pos);
-        //         } else {
-        //             this.value = "";
-        //         }
-        //     } else {
-        //         this.lastValid = val;
-        //     }
-        // });
         $(document).ready(function() {
             $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd'}).datepicker("setDate", new Date());
-            //$("#datepicker").validate();
             /**
              * Validate the form
              */
@@ -33,7 +16,6 @@
                 rules: {
                     amount: {
                         required: true
-                        //number:true
                     },
                     date: 'dateISO',
                     income_category: 'required'

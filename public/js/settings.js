@@ -1,9 +1,7 @@
 $(document).ready(function() {
     $(".updateIncome").click(function() {
-        //$("#incomeID").val("");
         $("#incomeID").val($(this).attr("data-id"));
         $("#incomeCategory").val($(this).attr("data-name"));
-        //var id = $(this).attr("data-id");
         $("#staticIncomeModal").modal("show");
     });
 
@@ -108,7 +106,6 @@ $(document).ready(function() {
                             var resultEditExpCat='';
                             $.each(data.errors,  function (index, element) {               
                                 resultEditExpCat += element +  '<br/>';  
-                                //alert(element); // alert the values 
                               });           
                               $('#messageEditExpense').html(resultEditExpCat); //insert the concatinated values inside a div 
                         }
@@ -117,7 +114,6 @@ $(document).ready(function() {
                         alert('Something went wrong');
                     }     
             });
-            //return false
           }
 	});
 
@@ -138,10 +134,6 @@ $(document).ready(function() {
                 url: "/dashboard/editincomecategory",
                 dataType: 'text',
                 data: formData,//{id:id, name:name},
-                /*success: function(callback) {
-                    $("#staticIncomeModal").modal('hide');
-                    window.location.reload();
-                    }   */   
                     success: function(result) {
                         var data = JSON.parse(result);
                         $('#messageEditIncome').html('');
@@ -152,7 +144,6 @@ $(document).ready(function() {
                             var resultIncome='';
                             $.each(data.errors,  function (index, element) {               
                                 resultIncome += element +  '<br/>';  
-                                //alert(element); // alert the values 
                               });           
                               $('#messageEditIncome').html(resultIncome); //insert the concatinated values inside a div 
                         }
@@ -191,8 +182,7 @@ $(document).ready(function() {
                         }else{
                             var result1='';
                             $.each(data.errors,  function (index, element) {               
-                                result1 += element +  '<br/>';  
-                                //alert(element); // alert the values 
+                                result1 += element +  '<br/>';   
                               });           
                               $('#messageEditPayment').html(result1); //insert the concatinated values inside a div 
                         }
@@ -201,7 +191,6 @@ $(document).ready(function() {
                         alert('Something went wrong');
                     }     
             });
-            //return false
           }
 	});
 
@@ -239,7 +228,6 @@ $(document).ready(function() {
                         alert('Something went wrong');
                     }     
             });
-            //return false
           }
 	});
 
@@ -269,7 +257,6 @@ $(document).ready(function() {
                             var resultAddExpenseCat='';
                             $.each(data.errors,  function (index, element) {               
                                 resultAddExpenseCat += element +  '<br/>';  
-                                //alert(element); // alert the values 
                               });           
                               $('#messageAddExpCategory').html(resultAddExpenseCat); //insert the concatinated values inside a div 
                         }
@@ -278,7 +265,6 @@ $(document).ready(function() {
                         alert('Something went wrong');
                     }     
             });
-            //return false
           }
 	});
 
@@ -308,7 +294,6 @@ $(document).ready(function() {
                             var resultAddPaymentCat='';
                             $.each(data.errors,  function (index, element) {               
                                 resultAddPaymentCat += element +  '<br/>';  
-                                //alert(element); // alert the values 
                               });           
                               $('#messageAddPayCategory').html(resultAddPaymentCat); //insert the concatinated values inside a div 
                         }
@@ -317,7 +302,6 @@ $(document).ready(function() {
                         alert('Something went wrong');
                     }     
             });
-            //return false
           }
 	});
 
@@ -325,7 +309,6 @@ $(document).ready(function() {
         if($(this).is(':checked')) {
           $('#categoryLimit').attr('disabled', false).rules('add', {
             required: true
-            //pwchecknumber: true
           });
           $('#limitcheckbox').val('1');
           $('input[type="submit"]').attr('disabled', false);
@@ -365,7 +348,6 @@ $(document).ready(function() {
                 $.ajax({
                     url:"/dashboard/deleteincomecategory",
                     method:"POST",
-            //dataType: 'text',
                     data:{id:id, action:action},
                     success:function(callback) {		
                         button.closest("li").remove();
@@ -384,7 +366,6 @@ $(document).ready(function() {
             $.ajax({
                 url:"/dashboard/deleteexpensecategory",
                 method:"POST",
-        //dataType: 'text',
                 data:{id:id, action:action},
                 success:function(callback) {		
                     button.closest("li").remove();
@@ -403,7 +384,7 @@ $(document).ready(function() {
             $.ajax({
                 url:"/dashboard/deletepaymentmethod",
                 method:"POST",
-        //dataType: 'text',
+
                 data:{id:id, action:action},
                 success:function(callback) {		
                     button.closest("li").remove();
