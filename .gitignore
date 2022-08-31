@@ -3,3 +3,5 @@ vendor/
 
 # Ignore the Config
 App/Config.php
+App/Mail.php
+logs/
