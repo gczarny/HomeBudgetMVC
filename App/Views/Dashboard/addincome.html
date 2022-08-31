@@ -50,9 +50,11 @@
         </div>
         <div class="form-group mb-2">
             <label for="datepicker">Date</label>
-            <input type="date" id="datepicker" class="form-control" name="date" placeholder="Date"
-                value="{{ income.date }}" min="1900-01-01" max="2099-09-13" required/>
-        </div>
+            <div class="input-group mb-3">
+                <input type="text" id="datepicker" class="form-control" name="date" placeholder="Date"
+                    value="{{ income.date }}" min="1900-01-01" max="2099-09-13" required/>
+                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+            </div>
         <div class="form-group mb-2">
             <label for="inputIncCategory">Category</label>
             <select class="form-control" id="inputIncCategory" name="income_category" required>
