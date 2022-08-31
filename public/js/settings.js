@@ -29,8 +29,6 @@ $(document).ready(function() {
             data: {'str1' : str},
                 success: function(res) {
                     var datas1 = JSON.parse(res);
-                    //console.log(datas1['0'].limitisset);
-                    //$("#limitcheckbox").val(datas1['0'].limitisset);
                     if(datas1['0'].limitisset == "1"){
                         $("#limitcheckbox").prop('checked', true);
                         $("#categoryLimit").prop('disabled', false);
@@ -81,34 +79,6 @@ $(document).ready(function() {
         $("#staticAddPaymentCategoryModal").modal("show");
     });
 
-    // $('[name="categoryLimit"]').on("keyup", function(){
-    //         var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
-    //             val = this.value;
-    //         var pos = this.selectionStart - 1;
-            
-    //         if(!valid){
-    //             if(typeof this.lastValid != "undefined") {
-    //                 this.value = this.lastValid
-    //                 this.setSelectionRange(pos, pos);
-    //             } else {
-    //                 this.value = "";
-    //             }
-    //         } else {
-    //             this.lastValid = val;
-    //         }
-    // });
-
-    // var greaterThanZeroError = "Number should be grater than 0";
-    // var noSpecialCharsError = "Numeric only!"
-
-    // $.validator.addMethod("pwcheckspechars", function (value) {
-    //     return /[!@#$Â£%^&*()_=\[\]{};':"\\|,.<>\/?+-]/.test(value)
-    // }, noSpecialCharsError);
-
-    // $.validator.addMethod("pwchecknumber", function (value) {
-    //     return /^\s*(?=.*[1-9])\d*(?:\,\.\d{1,2})?\s*$/.test(value) // 
-    // }, greaterThanZeroError);
-
     var validator = $('#staticExpenseModal #formExpense').validate({
 		rules: {
             expenseCategory: {
@@ -129,8 +99,6 @@ $(document).ready(function() {
                 dataType: 'text',
                 data: formData,
                     success: function(resultEditExp) {
-                        console.log(resultEditExp);
-                        //console.log(result.status);
                         var data = JSON.parse(resultEditExp);
                         $('#messageEditExpense').html('');
                         if(data.status=='success'){
@@ -146,7 +114,6 @@ $(document).ready(function() {
                         }
                     },
                     error: function(resultEditExp){
-                        console.log(resultEditExp);
                         alert('Something went wrong');
                     }     
             });
@@ -176,8 +143,6 @@ $(document).ready(function() {
                     window.location.reload();
                     }   */   
                     success: function(result) {
-                        console.log(result);
-                        //console.log(result.status);
                         var data = JSON.parse(result);
                         $('#messageEditIncome').html('');
                         if(data.status=='success'){
@@ -193,7 +158,6 @@ $(document).ready(function() {
                         }
                     },
                     error: function(result){
-                        console.log(result);
                         alert('Something went wrong');
                     }     
             });
@@ -219,8 +183,6 @@ $(document).ready(function() {
                 dataType: 'text',
                 data: formData,
                     success: function(result) {
-                        console.log(result);
-                        //console.log(result.status);
                         var data = JSON.parse(result);
                         $('#messageEditPayment').html('');
                         if(data.status=='success'){
@@ -236,7 +198,6 @@ $(document).ready(function() {
                         }
                     },
                     error: function(result){
-                        console.log(result);
                         alert('Something went wrong');
                     }     
             });
@@ -261,7 +222,6 @@ $(document).ready(function() {
                 dataType: 'text',
                 data: formData,
                     success: function(result) {
-                        console.log(result);
                         var data = JSON.parse(result);
                         $('#messageAddIncCategory').html('');
                         if(data.status=='success'){
@@ -276,7 +236,6 @@ $(document).ready(function() {
                         }
                     },
                     error: function(result){
-                        console.log(result);
                         alert('Something went wrong');
                     }     
             });
@@ -301,7 +260,6 @@ $(document).ready(function() {
                 dataType: 'text',
                 data: formData,
                     success: function(resultAddExp) {
-                        console.log(resultAddExp);
                         var data = JSON.parse(resultAddExp);
                         $('#messageAddExpCategory').html('');
                         if(data.status=='success'){
@@ -317,7 +275,6 @@ $(document).ready(function() {
                         }
                     },
                     error: function(resultAddExp){
-                        console.log(resultAddExp);
                         alert('Something went wrong');
                     }     
             });
@@ -342,7 +299,6 @@ $(document).ready(function() {
                 dataType: 'text',
                 data: formData,
                     success: function(resultAddPay) {
-                        console.log(resultAddPay);
                         var data = JSON.parse(resultAddPay);
                         $('#messageAddPayCategory').html('');
                         if(data.status=='success'){
@@ -358,7 +314,6 @@ $(document).ready(function() {
                         }
                     },
                     error: function(resultAddPay){
-                        console.log(resultAddPay);
                         alert('Something went wrong');
                     }     
             });

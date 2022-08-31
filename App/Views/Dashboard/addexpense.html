@@ -46,7 +46,7 @@
                 }
             });
             
-            $('#inputAmount').on('change', function(){
+            $('#inputAmount').on('input', function(){
                 providedAmountByUser = $(this).val()
                 // var valid = /^\d{0,9}([\.\,]\d{0,2})?$/.test(this.value),
                 //     val = this.value;
@@ -114,8 +114,6 @@
                         var monthExtractionFromExpenseIteration = expenseDateIteration.getMonth() + 1;           
                         if(categoryValueSelected == objectExampleData[i].expense_category_assigned_to_user_id && monthExtractionFromExpenseIteration == dMonth){
                             sumOfExpenses += parseFloat(objectExampleData[i].amount);
-                            console.log(objectExampleData[i].date_of_expense);
-                            console.log(objectExampleData[i].amount);
                         }
                     }
             }
@@ -184,16 +182,16 @@
                 <label for="inputAmount">Amount</label>
                 <input id="inputAmount" class="form-control" name="amount" placeholder="Amount"
                     value="" autocomplete="off" type="number"  pattern="[0-9]+([\.,][0-9]+)?" step="0.01"
-                    title="This should be a number with up to 2 decimal places."/>
+                    title="This should be a number with up to 2 decimal places." required/>
             </div>
             <div class="form-group mb-2">
                 <label for="datepicker">Date</label>
-                <input type="text" id="datepicker" class="form-control" name="date" placeholder="Date"
-                    value="{{ expense.date }}" />
+                <input type="date" id="datepicker" class="form-control" name="date" placeholder="Date"
+                    value="{{ expense.date }}" min="1900-01-01" max="2099-09-13" required/>
             </div>
             <div class="form-group mb-2">
                 <label for="inputExpCategory">Category</label>
-                <select class="form-control" id="inputExpCategory" name="expense_category">
+                <select class="form-control" id="inputExpCategory" name="expense_category" required>
                     <option value="" >Select Category</option>
                     {% for expense in expenseList %}
                         <option value="{{ expense.id }}" data-id="{{ expense.is_limit }}" data-entry-id="{{ expense.limit_set }}">
