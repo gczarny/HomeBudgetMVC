@@ -5,3 +5,4 @@ vendor/
 App/Config.php
 App/Mail.php
 logs/
+logs/
